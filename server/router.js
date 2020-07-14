@@ -1,18 +1,28 @@
 const { request } = require("express");
 
 module.exports = function(router) {
-  router.get("/api/exercise", (request, response, next) => {
-    let level = request.body.level;
+  router.get("/api/exercise/:level", (request, response, next) => {
+    let level = request.params.level;
     let exerciseIntervals = generateMelody(Number(level));
-    let abcData = translateToAbc(exerciseIntervals);
+    // let abcData = translateToAbc(exerciseIntervals);
+    let abcData = translateToAbc([
+      { interval: 4, acc: 2 },
+      { interval: 4, acc: 2 },
+      { interval: -4, acc: 1 },
+      { interval: 2, acc: 1 },
+      { interval: 3, acc: 2 },
+      { interval: -3, acc: 0 },
+      { interval: -2, acc: 0 }
+    ])
     console.log(exerciseIntervals);
     console.log(abcData);
-    const noteLength = "[L:1/4]"
+    const noteLength = "[L:1/4] "
     response.send(noteLength + abcData);
   })
 }
 
 function generateMelody(level, key) {
+  console.log("LEVEL: " + level);
   let maxInterval = 2;
   let accidentals = false;
   switch(level) {
@@ -96,13 +106,14 @@ function translateToAbc(data, key) {
     cumulative += data.interval;
     return { interval: cumulative, acc: data.acc }
   })
+  console.log("cumulative below");
   console.log(cumulativeIntervals);
   let abcData = cumulativeIntervals.map((myNote, index) => {
     let noteLetter;
     if (myNote.interval < 0) {
       noteLetter = myNotes[data.length + myNote.interval - 1] + ',';
     } else {
-      noteLetter = myNotes[myNote.interval];
+      noteLetter = myNotes[myNote.interval % myNotes.length - 1];
     }
     // return {note: noteLetter, acc: myNote.acc}
     if (myNote.acc === 2) {

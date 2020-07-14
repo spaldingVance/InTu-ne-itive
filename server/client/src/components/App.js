@@ -3,6 +3,7 @@ import { Nav, Form, FormControl, Button } from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import Player from './Player';
 import Score from './Score';
+import PitchDetector from './PitchDetector';
 
 function App() {
   return (
@@ -24,6 +25,7 @@ function App() {
         </Navbar.Collapse>
       </Navbar>
       <Score />
+      <PitchDetector />
     </div>
   );
 }

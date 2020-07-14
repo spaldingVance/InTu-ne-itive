@@ -6,7 +6,7 @@ import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Player from './Player';
 
-import getExercise from "../actions/index"
+import { getExercise } from "../actions/index"
 
 const notation = 'C D E F  | G A B c|';
 const engraverParams = { add_classes: true }
@@ -33,7 +33,7 @@ class Score extends React.Component {
       <div>
         <Notation notation={this.props.exercise} engraverParams={engraverParams} />
         <Button onClick={startVisualPlaying}>Start</Button>
-        <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
+        <Button onClick={() => this.loadExercise(4)}>Load Exercise</Button>
         <Player startVisualPlaying={startVisualPlaying}/>
       </div>
 
@@ -41,7 +41,7 @@ class Score extends React.Component {
     } else {
       return (
         <div>
-          <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
+          <Button onClick={() => this.loadExercise(4)}>Load Exercise</Button>
         </div>
   
       )
