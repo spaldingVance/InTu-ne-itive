@@ -5,6 +5,7 @@ module.exports = function(router) {
     let level = request.body.level;
     let exerciseIntervals = generateMelody(Number(level));
     let abcData = translateToAbc(exerciseIntervals);
+    console.log(exerciseIntervals);
     console.log(abcData);
     response.send(abcData);
   })
@@ -50,9 +51,9 @@ function generateMelody(level, key) {
       }
     } else {
       if (Math.round(Math.random())) {
-        return {interval: (0 - note), acc: 0};
+        return {interval: (0 - note), acc: 1};
       } else {
-        return {interval: note, acc: 0};
+        return {interval: note, acc: 1};
       }
     }
   })
