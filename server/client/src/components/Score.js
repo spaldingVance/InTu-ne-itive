@@ -4,6 +4,7 @@ import { Button } from 'react-bootstrap';
 import ReactDOM from "react-dom";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
+import Player from './Player';
 
 import getExercise from "../actions/index"
 
@@ -33,6 +34,7 @@ class Score extends React.Component {
         <Notation notation={this.props.exercise} engraverParams={engraverParams} />
         <Button onClick={startVisualPlaying}>Start</Button>
         <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
+        <Player notation={this.props.exercise}/>
       </div>
 
     )

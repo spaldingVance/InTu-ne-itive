@@ -24,7 +24,6 @@ function App() {
         </Navbar.Collapse>
       </Navbar>
       <Score />
-      <Player />
     </div>
   );
 }

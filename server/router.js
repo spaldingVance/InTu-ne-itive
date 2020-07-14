@@ -7,7 +7,8 @@ module.exports = function(router) {
     let abcData = translateToAbc(exerciseIntervals);
     console.log(exerciseIntervals);
     console.log(abcData);
-    response.send(abcData);
+    const noteLength = "[L:1/4]"
+    response.send(noteLength + abcData);
   })
 }
 
