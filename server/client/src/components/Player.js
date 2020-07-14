@@ -2,12 +2,13 @@ import React from 'react';
 import { Midi } from 'react-abc';
 import abcjs from 'abcjs/midi';
 import { render } from 'react-dom';
+import { connect } from "react-redux";
 
 // const notation = 'C ^G, _A, G,| ^E, F, A, G,|';
 
 const midiParams = { qpm: 60 };
 
-export default class Player extends React.Component {
+class Player extends React.Component {
   constructor(props) {
     super(props)
     this.setOnClick = this.setOnClick.bind(this);
@@ -24,17 +25,37 @@ export default class Player extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.props)
     console.log("COMPONENT DID MOUNT");
     this.setOnClick(this.props.startVisualPlaying);
   }
 
+  componentDidUpdate() {
+    console.log("COMPONENT DID UPDATE");
+    this.setOnClick(this.props.startVisualPlaying);
+  }
+
   render() {
+    console.log(this.props.exercise);
     return (
       <div>
-        <Midi notation={this.props.notation} midiParams={midiParams} />
+        <Midi key={this.props.exercise} notation={this.props.exercise} midiParams={midiParams} />
       </div>
     )
   }
 }
+
+function mapStateToProps(state) {
+  return {
+    exercise: state.exercise
+  };
+}
+
+// function mapDispatchToProps(dispatch) {
+// return bindActionCreators(
+//   { getExercise },
+//   dispatch
+// );
+// }
+
+export default connect(mapStateToProps, null)(Player);
 

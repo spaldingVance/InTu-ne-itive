@@ -34,7 +34,7 @@ class Score extends React.Component {
         <Notation notation={this.props.exercise} engraverParams={engraverParams} />
         <Button onClick={startVisualPlaying}>Start</Button>
         <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
-        <Player notation={this.props.exercise} startVisualPlaying={startVisualPlaying}/>
+        <Player startVisualPlaying={startVisualPlaying}/>
       </div>
 
     )
