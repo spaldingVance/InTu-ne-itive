@@ -34,12 +34,11 @@ class Score extends React.Component {
         <Notation notation={this.props.exercise} engraverParams={engraverParams} />
         <Button onClick={startVisualPlaying}>Start</Button>
         <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
-        <Player notation={this.props.exercise}/>
+        <Player notation={this.props.exercise} startVisualPlaying={startVisualPlaying}/>
       </div>
 
     )
     } else {
-      console.log("BAH")
       return (
         <div>
           <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
@@ -58,8 +57,8 @@ let myData = [{ "interval": -2, "acc": 2 }, { "interval": 1, "acc": 0 }, { "inte
 function startVisualPlaying() {
   console.log("STARTED");
   var i = 0;
-
-  function change() {
+  let timedInterval;
+  (function change() {
     let measureIndex = 0;
     let noteIndex = i;
     if (i > 3) {
@@ -91,8 +90,9 @@ function startVisualPlaying() {
       }
       i++;
     }
-  }
-  let timedInterval = setInterval(change, 1000);
+    clearInterval(timedInterval);
+    timedInterval = setInterval(change, 1000);
+  })();
 }
 
 
