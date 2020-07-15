@@ -46,7 +46,7 @@ class Player extends React.Component {
 
 function mapStateToProps(state) {
   return {
-    exercise: state.exercise
+    exercise: state.exercise.abc
   };
 }
 

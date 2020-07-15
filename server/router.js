@@ -1,23 +1,15 @@
 const { request } = require("express");
 
-module.exports = function(router) {
+module.exports = function (router) {
   router.get("/api/exercise/:level", (request, response, next) => {
     let level = request.params.level;
     let exerciseIntervals = generateMelody(Number(level));
-    // let abcData = translateToAbc(exerciseIntervals);
-    let abcData = translateToAbc([
-      { interval: 4, acc: 2 },
-      { interval: 4, acc: 2 },
-      { interval: -4, acc: 1 },
-      { interval: 2, acc: 1 },
-      { interval: 3, acc: 2 },
-      { interval: -3, acc: 0 },
-      { interval: -2, acc: 0 }
-    ])
+    let abcData = translateToAbc(exerciseIntervals);
+    let cumulativeIntervals = getCumulativeIntervals(exerciseIntervals);
     console.log(exerciseIntervals);
     console.log(abcData);
     const noteLength = "[L:1/4] "
-    response.send(noteLength + abcData);
+    response.send({ abc: (noteLength + abcData), midi: translateCumulativeToMidi(cumulativeIntervals) });
   })
 }
 
@@ -25,26 +17,57 @@ function generateMelody(level, key) {
   console.log("LEVEL: " + level);
   let maxInterval = 2;
   let accidentals = false;
-  switch(level) {
-    case 1: 
+  switch (level) {
+    case 1:
       break;
     case 2:
-      maxInterval = 3;
+      maxInterval = 2;
+      accidentals = true;
       break;
     case 3:
       maxInterval = 3;
-      accidentals = true;
       break;
     case 4:
-      maxInterval = 5;
+      maxInterval = 3;
       accidentals = true;
       break;
     case 5:
+      maxInterval = 4;
+      break;
+    case 6:
+      maxInterval = 4;
+      accidentals = true;
+      break;
+    case 7:
+      maxInterval = 5;
+      break;
+    case 8:
+      maxInterval = 5;
+      accidentals = true;
+      break;
+    case 9:
+      maxInterval = 6;
+      break;
+    case 10:
+      maxInterval = 6;
+      accidentals = true;
+      break;
+    case 11:
+      maxInterval = 7;
+      break;
+    case 12:
+      maxInterval = 7;
+      accidentals = true;
+      break;
+    case 13:
+      maxInterval = 8;
+      break;
+    case 14:
       maxInterval = 8;
       accidentals = true;
       break;
-    case 6:
-      maxInterval = 12;
+    case 15:
+      maxInterval = 10;
       accidentals = true;
   }
   let exerciseNotes = [];
@@ -56,25 +79,25 @@ function generateMelody(level, key) {
     if (accidentals) {
       let acc = Math.floor((Math.random() * 3))
       if (Math.round(Math.random())) {
-        return {interval: (0 - note), acc: acc};
+        return { interval: (0 - note), acc: acc };
       } else {
-        return {interval: note, acc: acc};
+        return { interval: note, acc: acc };
       }
     } else {
       if (Math.round(Math.random())) {
-        return {interval: (0 - note), acc: 1};
+        return { interval: (0 - note), acc: 1 };
       } else {
-        return {interval: note, acc: 1};
+        return { interval: note, acc: 1 };
       }
     }
   })
   let notesFixedRange = exerciseNotes.slice();
   for (let i = 2; i < exerciseNotes.length; i++) {
-    if (exerciseNotes[i-2].interval < 0 && exerciseNotes[i-1].interval < 0 && exerciseNotes[i].interval < 0) {
+    if (exerciseNotes[i - 2].interval < 0 && exerciseNotes[i - 1].interval < 0 && exerciseNotes[i].interval < 0) {
       notesFixedRange[i].interval = 0 - exerciseNotes[i].interval
-    } else if (exerciseNotes[i-2].interval > 0 && exerciseNotes[i-1].interval > 0 && exerciseNotes[i].interval > 0) {
+    } else if (exerciseNotes[i - 2].interval > 0 && exerciseNotes[i - 1].interval > 0 && exerciseNotes[i].interval > 0) {
       notesFixedRange[i].interval = 0 - exerciseNotes[i].interval
-    } else if (exerciseNotes[i-2].interval === 0 && exerciseNotes[i-1].interval === 0 && exerciseNotes[i].interval === 0) {
+    } else if (exerciseNotes[i - 2].interval === 0 && exerciseNotes[i - 1].interval === 0 && exerciseNotes[i].interval === 0) {
       let nonZeroInterval = 0;
       while (nonZeroInterval === 0) {
         nonZeroInterval = Math.ceil((Math.random() * (maxInterval - 1)));
@@ -82,7 +105,7 @@ function generateMelody(level, key) {
       notesFixedRange[i].interval = nonZeroInterval;
     }
   }
-  
+
   console.log(notesFixedRange.reduce((acc, cur) => acc = Number(acc) + cur.interval, 0))
   console.log(typeof notesFixedRange[0].interval)
   while (notesFixedRange.reduce((acc, cur) => acc = Number(acc) + cur.interval, 0) <= -6) {
@@ -98,6 +121,15 @@ function generateMelody(level, key) {
   return notesFixedRange;
 }
 
+function getCumulativeIntervals(data) {
+  let cumulative = 0;
+  let cumulativeIntervals = data.map(data => {
+    cumulative += data.interval;
+    return { interval: cumulative, acc: data.acc }
+  })
+  return cumulativeIntervals;
+}
+
 function translateToAbc(data, key) {
   var myNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
   console.log("DATA: " + data)
@@ -108,12 +140,14 @@ function translateToAbc(data, key) {
   })
   console.log("cumulative below");
   console.log(cumulativeIntervals);
+  console.log("midi below");
+  console.log(translateCumulativeToMidi(cumulativeIntervals));
   let abcData = cumulativeIntervals.map((myNote, index) => {
     let noteLetter;
     if (myNote.interval < 0) {
-      noteLetter = myNotes[data.length + myNote.interval - 1] + ',';
+      noteLetter = myNotes[data.length + myNote.interval] + ',';
     } else {
-      noteLetter = myNotes[myNote.interval % myNotes.length - 1];
+      noteLetter = myNotes[myNote.interval % myNotes.length];
     }
     // return {note: noteLetter, acc: myNote.acc}
     if (myNote.acc === 2) {
@@ -132,4 +166,40 @@ function translateToAbc(data, key) {
   console.log(abcData.join(" "));
   let notationString = abcData.join(" ");
   return notationString;
+}
+
+function translateCumulativeToMidi(cumulative) {
+  translateObj = {
+    "0": 0,
+    "1": 2,
+    "2": 4,
+    "3": 5,
+    "4": 7,
+    "5": 9,
+    "6": 11,
+    "7": 12,
+    "8": 13,
+    "9": 15,
+    "10": 17,
+    "-1": -1,
+    "-2": -3,
+    "-3": -5,
+    "-4": -7,
+    "-5": -8,
+    "-6": -10,
+    "-7": -12,
+    "-8": -13,
+    "-9": -15,
+    "-10": -17,
+  }
+  let translated = cumulative.map(interval => {
+    if (interval.acc === 1) {
+      return translateObj[String(interval.interval)]
+    } else if (interval.acc === 2) {
+      return translateObj[String(interval.interval)] + 1;
+    } else {
+      return translateObj[String(interval.interval)] - 1;
+    }
+  });
+  return translated;
 }

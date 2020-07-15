@@ -5,11 +5,14 @@ import ReactDOM from "react-dom";
 import { bindActionCreators } from "redux";
 import { connect } from "react-redux";
 import Player from './Player';
+import PitchDetector from './PitchDetector';
 
 import { getExercise } from "../actions/index"
 
 const notation = 'C D E F  | G A B c|';
 const engraverParams = { add_classes: true }
+
+let timeStamps=[];
 
 class Score extends React.Component {
   constructor(props) {
@@ -33,15 +36,16 @@ class Score extends React.Component {
       <div>
         <Notation notation={this.props.exercise} engraverParams={engraverParams} />
         <Button onClick={startVisualPlaying}>Start</Button>
-        <Button onClick={() => this.loadExercise(4)}>Load Exercise</Button>
+        <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
         <Player startVisualPlaying={startVisualPlaying}/>
+        <PitchDetector timeStamps={timeStamps}/>
       </div>
 
     )
     } else {
       return (
         <div>
-          <Button onClick={() => this.loadExercise(4)}>Load Exercise</Button>
+          <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
         </div>
   
       )
@@ -54,11 +58,14 @@ class Score extends React.Component {
 let myData = [{ "interval": -2, "acc": 2 }, { "interval": 1, "acc": 0 }, { "interval": -1, "acc": 1 }, { "interval": -2, "acc": 2 }, { "interval": 1, "acc": 1 }, { "interval": 2, "acc": 1 }, { "interval": -1, "acc": 1 }];
 
 
+
+
 function startVisualPlaying() {
   console.log("STARTED");
   var i = 0;
   let timedInterval;
   (function change() {
+    
     let measureIndex = 0;
     let noteIndex = i;
     if (i > 3) {
@@ -83,22 +90,26 @@ function startVisualPlaying() {
 
       console.log("abcjs-n" + noteIndex);
       document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "red";
+      
       if (noteIndex > 0) {
         document.getElementsByClassName("abcjs-n" + (noteIndex - 1))[measureIndex].style.fill = "black";
       } else if (noteIndex === 0 && measureIndex > 0) {
         document.getElementsByClassName("abcjs-n" + (noteIndex + 3))[measureIndex - 1].style.fill = "black";
       }
       i++;
+      timeStamps.push(performance.now());
     }
     clearInterval(timedInterval);
     timedInterval = setInterval(change, 1000);
   })();
+  console.log("TIMESTAMPS_________")
+  console.log(timeStamps);
 }
 
 
 function mapStateToProps(state) {
     return {
-      exercise: state.exercise
+      exercise: state.exercise.abc
     };
 }
 

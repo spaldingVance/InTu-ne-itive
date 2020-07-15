@@ -25,7 +25,6 @@ function App() {
         </Navbar.Collapse>
       </Navbar>
       <Score />
-      <PitchDetector />
     </div>
   );
 }
