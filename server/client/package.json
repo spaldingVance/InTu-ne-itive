@@ -20,7 +20,8 @@
     "react-scripts": "3.4.1",
     "react-vexflow": "0.0.4",
     "redux": "^4.0.5",
-    "redux-promise": "^0.6.0"
+    "redux-promise": "^0.6.0",
+    "uuid": "^8.2.0"
   },
   "scripts": {
     "start": "react-scripts start",

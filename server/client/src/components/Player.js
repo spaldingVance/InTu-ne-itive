@@ -3,6 +3,8 @@ import { Midi } from 'react-abc';
 import abcjs from 'abcjs/midi';
 import { render } from 'react-dom';
 import { connect } from "react-redux";
+import { bindActionCreators } from "redux";
+import { getExercise } from "../actions/index"
 
 // const notation = 'C ^G, _A, G,| ^E, F, A, G,|';
 
@@ -51,12 +53,12 @@ function mapStateToProps(state) {
   };
 }
 
-// function mapDispatchToProps(dispatch) {
-// return bindActionCreators(
-//   { getExercise },
-//   dispatch
-// );
-// }
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    { getExercise },
+    dispatch
+  );
+}
 
-export default connect(mapStateToProps, null)(Player);
+export default connect(mapStateToProps, mapDispatchToProps)(Player);
 
