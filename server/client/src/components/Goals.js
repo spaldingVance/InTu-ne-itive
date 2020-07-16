@@ -137,7 +137,7 @@ class Goals extends React.Component {
             <Row>
               <Col md={{ span: 8 }} className="welcome-back">
                 <Row>
-                  <h1>Welcome Back Spalding!</h1>
+                  <h1>Welcome Back {this.props.userName}!</h1>
                 </Row>
               </Col>
             </Row>
@@ -243,7 +243,9 @@ class Goals extends React.Component {
 function mapStateToProps(state) {
   return {
     exercise: state.exercise.abc,
-    midi: state.exerciseMidi.midi
+    midi: state.exerciseMidi.midi,
+    userName: state.user.name,
+    user_id: state.user.user_id
   };
 }
 

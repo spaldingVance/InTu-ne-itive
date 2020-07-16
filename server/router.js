@@ -13,6 +13,7 @@ module.exports = function (router) {
     const noteLength = "[L:1/4] "
     response.send({ abc: (noteLength + abcData), midi: translateCumulativeToMidi(cumulativeIntervals) });
   })
+
   router.get("/api/intervals/:interval", (request, response, next) => {
     let interval = Number(request.params.interval);
     console.log(interval);
@@ -23,6 +24,7 @@ module.exports = function (router) {
     const noteLength = "[L:1/4] "
     response.send({ abc: (noteLength + abcData), midi: translateCumulativeToMidi(intervalExercise) });
   })
+
   router.post("/api/user/:userId", (request, response, next) => {
     let userId = request.params.userId;
     let name = request.body.name;
@@ -30,12 +32,44 @@ module.exports = function (router) {
     request.redis.set(userId, name, redis.print);
     response.send({name: name, user_id: userId});
   })
+
   router.get("/api/user/:userId", (request, response, next) => {
     let userId = request.params.userId;
     console.log(userId);
     request.redis.get(userId, function(err, reply) {
       response.send({name: reply, user_id: userId});
     });
+  })
+
+  //set interval accuracy
+  router.put("/api/user/:userId/intervalAcc/:interval", (request, response, next) => {
+    let interval = request.params.interval;
+    let acc = request.body.accuracy;
+    let userId = request.params.userId
+    let redisPath = `${userId}:${interval}`
+    request.redis.lpush(redisPath, acc, function(err, reply) {
+      response.send(reply);
+    });
+  })
+
+  //set note accuracy
+  router.put("/api/user/:userId/noteAcc", (request, response, next) => {
+    let acc = request.body.accuracy;
+    let userId = request.params.userId;
+    let redisPath = `${userId}:noteAcc`;
+    request.redis.lpush(redisPath, acc, function(err, reply) {
+      response.send(reply);
+    })
+  })
+
+  //set pitch accuracy
+  router.put("/api/user/:userId/pitchAcc", (request, response, next) => {
+    let acc = request.body.accuracy;
+    let userId = request.params.userId;
+    let redisPath = `${userId}:pitchAcc`;
+    request.redis.lpush(redisPath, acc, function(err, reply) {
+      response.send(reply);
+    })
   })
 }
 

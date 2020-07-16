@@ -43,13 +43,13 @@ class PitchDetector extends React.Component {
     let myWindow = this.props.timeStamps;
     console.log(myWindow);
     let window1 = pitchArr.filter(pitch => pitch.time > myWindow[0] && pitch.time < myWindow[1]);
-    let window2 = pitchArr.filter(pitch => pitch.time > myWindow[1] + 200 && pitch.time < myWindow[2]);
-    let window3 = pitchArr.filter(pitch => pitch.time > myWindow[2] + 200 && pitch.time < myWindow[3]);
-    let window4 = pitchArr.filter(pitch => pitch.time > myWindow[3] + 200 && pitch.time < myWindow[4]);
-    let window5 = pitchArr.filter(pitch => pitch.time > myWindow[4] + 200 && pitch.time < myWindow[5]);
-    let window6 = pitchArr.filter(pitch => pitch.time > myWindow[5] + 200 && pitch.time < myWindow[6]);
-    let window7 = pitchArr.filter(pitch => pitch.time > myWindow[6] + 200 && pitch.time < myWindow[7]);
-    let window8 = pitchArr.filter(pitch => pitch.time > myWindow[7] + 200 && pitch.time < myWindow[7] + 1000);
+    let window2 = pitchArr.filter(pitch => pitch.time > myWindow[1] + 400 && pitch.time < myWindow[2]);
+    let window3 = pitchArr.filter(pitch => pitch.time > myWindow[2] + 300 && pitch.time < myWindow[3]);
+    let window4 = pitchArr.filter(pitch => pitch.time > myWindow[3] + 300 && pitch.time < myWindow[4]);
+    let window5 = pitchArr.filter(pitch => pitch.time > myWindow[4] + 300 && pitch.time < myWindow[5]);
+    let window6 = pitchArr.filter(pitch => pitch.time > myWindow[5] + 300 && pitch.time < myWindow[6]);
+    let window7 = pitchArr.filter(pitch => pitch.time > myWindow[6] + 300 && pitch.time < myWindow[7]);
+    let window8 = pitchArr.filter(pitch => pitch.time > myWindow[7] + 300 && pitch.time < myWindow[7] + 1000);
 
     console.log(window1);
     console.log(window2);
@@ -125,9 +125,11 @@ class PitchDetector extends React.Component {
     let avgCentsOff = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += Math.abs(cur)) / averages.length;
     console.log("AVERAGE CENTS OFF: " + avgCentsOff);
 
-
-
-    
+    let avgCentsOffRelative = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += cur) / averages.length;
+    let centsOffPerNote = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note));
+    console.log("avg cents off relative _________")
+    console.log(avgCentsOffRelative);
+    console.log(centsOffPerNote);
 
     console.log(window1);
     console.log(window2);
@@ -143,7 +145,7 @@ class PitchDetector extends React.Component {
       intervals.push(midiNotes[i] - midiNotes[i - 1]);
     }
 
-    let intervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1])) } })
+    let intervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]) - centsOffPerNote[0] ) } })
     console.log("INTERVAL ACCURACY");
     console.log(intervalAccuracy);
 
