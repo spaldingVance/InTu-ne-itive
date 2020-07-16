@@ -4,6 +4,8 @@ const router = require("./router.js");
 const bodyParser = require("body-parser");
 const cors = require("cors");
 const app = express();
+const redis = require("redis")
+
 
 app.use(cors())
 
@@ -13,6 +15,7 @@ app.use(
     extended: true,
   })
 );
+
 router(app);
 
 // if (process.env.NODE_ENV === "production") {
@@ -30,6 +33,10 @@ router(app);
 
 
 const port = process.env.PORT || 5000;
+const redis_port = process.env.PORT || 6379;
+
+const client = redis.createClient(redis_port);
+
 const server = http.createServer(app);
 
 server.listen(port);

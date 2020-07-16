@@ -1,6 +1,6 @@
 import { GET_EXERCISE } from '../actions/index';
 
-export default function (state = "", action) {
+export default function (state = {}, action) {
   console.log("ACTION TYPE: " + action.type)
   console.log(GET_EXERCISE)
   switch(action.type) {

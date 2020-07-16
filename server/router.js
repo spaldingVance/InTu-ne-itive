@@ -1,17 +1,48 @@
 const { request } = require("express");
 
 module.exports = function (router) {
+
   router.get("/api/exercise/:level", (request, response, next) => {
     let level = request.params.level;
     let exerciseIntervals = generateMelody(Number(level));
-    let abcData = translateToAbc(exerciseIntervals);
     let cumulativeIntervals = getCumulativeIntervals(exerciseIntervals);
+    let abcData = translateToAbc(cumulativeIntervals);
     console.log(exerciseIntervals);
     console.log(abcData);
     const noteLength = "[L:1/4] "
     response.send({ abc: (noteLength + abcData), midi: translateCumulativeToMidi(cumulativeIntervals) });
   })
+  router.get("/api/intervals/:interval", (request, response, next) => {
+    let interval = Number(request.params.interval);
+    console.log(interval);
+    let intervalExercise = generateIntervalExercise(interval);
+    let abcData = translateIntervalsToAbc(intervalExercise);
+    console.log(intervalExercise);
+    console.log(abcData);
+    const noteLength = "[L:1/4] "
+    response.send({ abc: (noteLength + abcData), midi: translateCumulativeToMidi(intervalExercise) });
+  })
 }
+
+
+function generateIntervalExercise(interval) {
+  let midiIntervals = [];
+  let cumulative = 0;
+  for (let i = 0; i < 7; i++) {
+    let rand = Math.round(Math.random());
+    if (rand === 1) {
+      cumulative += interval;
+      midiIntervals.push({ interval: cumulative, acc: 1 })
+    } else {
+      cumulative -= interval;
+      midiIntervals.push({ interval: cumulative, acc: 1 })
+    }
+  }
+  return midiIntervals;
+}
+
+
+
 
 function generateMelody(level, key) {
   console.log("LEVEL: " + level);
@@ -130,14 +161,8 @@ function getCumulativeIntervals(data) {
   return cumulativeIntervals;
 }
 
-function translateToAbc(data, key) {
+function translateToAbc(cumulativeIntervals, key) {
   var myNotes = ['C', 'D', 'E', 'F', 'G', 'A', 'B']
-  console.log("DATA: " + data)
-  let cumulative = 0;
-  let cumulativeIntervals = data.map(data => {
-    cumulative += data.interval;
-    return { interval: cumulative, acc: data.acc }
-  })
   console.log("cumulative below");
   console.log(cumulativeIntervals);
   console.log("midi below");
@@ -145,7 +170,7 @@ function translateToAbc(data, key) {
   let abcData = cumulativeIntervals.map((myNote, index) => {
     let noteLetter;
     if (myNote.interval < 0) {
-      noteLetter = myNotes[data.length + myNote.interval] + ',';
+      noteLetter = myNotes[cumulativeIntervals.length + myNote.interval] + ',';
     } else {
       noteLetter = myNotes[myNote.interval % myNotes.length];
     }
@@ -157,6 +182,27 @@ function translateToAbc(data, key) {
     } else {
       noteLetter = "_" + noteLetter;
     }
+    if ((index + 2) % 4 === 0) {
+      noteLetter = noteLetter + "|";
+    }
+    return noteLetter;
+  })
+  abcData.unshift('C');
+  console.log(abcData.join(" "));
+  let notationString = abcData.join(" ");
+  return notationString;
+}
+
+function translateIntervalsToAbc(cumulativeIntervals) {
+  var myNotes = ['C', 'C#', 'D', 'D#', 'E', 'F', 'F#', 'G', 'G#', 'A', 'A#', 'B'];
+  let abcData = cumulativeIntervals.map((myNote, index) => {
+    let noteLetter;
+    if (myNote.interval < 0) {
+      noteLetter = myNotes[cumulativeIntervals.length + myNote.interval] + ',';
+    } else {
+      noteLetter = myNotes[myNote.interval % myNotes.length];
+    }
+    // return {note: noteLetter, acc: myNote.acc}
     if ((index + 2) % 4 === 0) {
       noteLetter = noteLetter + "|";
     }

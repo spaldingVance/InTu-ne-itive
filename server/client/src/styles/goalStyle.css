@@ -1,0 +1,20 @@
+.goalsContainer{
+  background-color: rgb(141, 141, 141)
+}
+
+.note-goal-data {
+  /* border: solid black 5px;
+  border-radius: 10px; */
+  padding: 5%;
+}
+
+.pitch-goal-data {
+  /* border: solid black 5px;
+  border-radius: 10px; */
+  padding: 5%;
+}
+
+.micImg {
+  height: 100%;
+}
+

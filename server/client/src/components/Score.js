@@ -8,11 +8,12 @@ import Player from './Player';
 import PitchDetector from './PitchDetector';
 
 import { getExercise } from "../actions/index"
+import { Row, Container, Col } from 'react-bootstrap';
 
 const notation = 'C D E F  | G A B c|';
 const engraverParams = { add_classes: true }
 
-let timeStamps=[];
+let timeStamps = [];
 
 class Score extends React.Component {
   constructor(props) {
@@ -30,30 +31,44 @@ class Score extends React.Component {
     console.log(this.props.exercise);
   }
   render() {
-    if (this.props.exercise !== "") {
+    if (this.props.exercise) {
       console.log(this.props.exercise);
-    return (
-      <div>
-        <Notation notation={this.props.exercise} engraverParams={engraverParams} />
-        <Button onClick={startVisualPlaying}>Start</Button>
-        <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
-        <Player startVisualPlaying={startVisualPlaying}/>
-        <PitchDetector timeStamps={timeStamps}/>
-      </div>
+      return (
+        <Container fluid>
+          <Row>
+            <Col md={{ span: 8, offset: 2 }}>
+              <Notation notation={this.props.exercise} engraverParams={engraverParams} />
+            </Col>
+          </Row>
+          <Row>
+            <Col md={{ span: 8, offset: 2 }}>
+              <Player startVisualPlaying={startVisualPlaying} />
+              <Button onClick={startVisualPlaying}>Start</Button>
+              <Button onClick={() => this.loadExercise(1)}>Load Exercise</Button>
+            </Col>
+          </Row>
+          <Row>
+            <Col md={{ span: 8, offset: 2 }}>
+              <PitchDetector timeStamps={timeStamps} />
+            </Col>
+          </Row>
+        </Container>
 
-    )
+
+      )
     } else {
       return (
         <div>
-          <Button onClick={() => this.loadExercise(2)}>Load Exercise</Button>
+          <Row>
+            <Col md={{ span: 4, offset: 4 }}>
+              <Button onClick={() => this.loadExercise(1)}>Load Exercise</Button>
+            </Col>
+          </Row>
         </div>
-  
       )
     }
   }
 }
-
-
 
 let myData = [{ "interval": -2, "acc": 2 }, { "interval": 1, "acc": 0 }, { "interval": -1, "acc": 1 }, { "interval": -2, "acc": 2 }, { "interval": 1, "acc": 1 }, { "interval": 2, "acc": 1 }, { "interval": -1, "acc": 1 }];
 
@@ -65,7 +80,7 @@ function startVisualPlaying() {
   var i = 0;
   let timedInterval;
   (function change() {
-    
+
     let measureIndex = 0;
     let noteIndex = i;
     if (i > 3) {
@@ -90,7 +105,7 @@ function startVisualPlaying() {
 
       console.log("abcjs-n" + noteIndex);
       document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "red";
-      
+
       if (noteIndex > 0) {
         document.getElementsByClassName("abcjs-n" + (noteIndex - 1))[measureIndex].style.fill = "black";
       } else if (noteIndex === 0 && measureIndex > 0) {
@@ -108,9 +123,9 @@ function startVisualPlaying() {
 
 
 function mapStateToProps(state) {
-    return {
-      exercise: state.exercise.abc
-    };
+  return {
+    exercise: state.exercise.abc
+  };
 }
 
 function mapDispatchToProps(dispatch) {

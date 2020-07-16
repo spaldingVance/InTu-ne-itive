@@ -1,13 +1,15 @@
 import React from 'react';
-import { Nav, Form, FormControl, Button } from 'react-bootstrap';
+import { Nav, Form, FormControl, Button, Container } from 'react-bootstrap';
 import Navbar from 'react-bootstrap/Navbar';
 import Player from './Player';
 import Score from './Score';
 import PitchDetector from './PitchDetector';
+import Goals from './Goals';
+import "../styles/appStyle.css";
 
 function App() {
   return (
-    <div>
+    <Container className="appContainer" fluid>
       <Navbar bg="dark" variant="dark">
         <Navbar.Brand href="#home">EnTune</Navbar.Brand>
         <Nav className="mr-auto">
@@ -24,8 +26,9 @@ function App() {
           </Navbar.Text>
         </Navbar.Collapse>
       </Navbar>
-      <Score />
-    </div>
+      {/* <Score /> */}
+      <Goals />
+    </Container>
   );
 }
 
