@@ -7,7 +7,6 @@ export default function (state = {}, action) {
       console.log(action.payload.data)
       return action.payload.data
     default:
-      console.log("DEFAULT")
       return state;
   }
 }

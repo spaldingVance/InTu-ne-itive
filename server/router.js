@@ -1,4 +1,5 @@
 const { request } = require("express");
+const redis = require("redis")
 
 module.exports = function (router) {
 
@@ -21,6 +22,20 @@ module.exports = function (router) {
     console.log(abcData);
     const noteLength = "[L:1/4] "
     response.send({ abc: (noteLength + abcData), midi: translateCumulativeToMidi(intervalExercise) });
+  })
+  router.post("/api/user/:userId", (request, response, next) => {
+    let userId = request.params.userId;
+    let name = request.body.name;
+    console.log("NAME: " + name + " id: " + userId);
+    request.redis.set(userId, name, redis.print);
+    response.send({name: name, user_id: userId});
+  })
+  router.get("/api/user/:userId", (request, response, next) => {
+    let userId = request.params.userId;
+    console.log(userId);
+    request.redis.get(userId, function(err, reply) {
+      response.send({name: reply, user_id: userId});
+    });
   })
 }
 

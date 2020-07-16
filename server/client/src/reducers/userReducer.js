@@ -1,16 +1,16 @@
-import { SET_USER } from '../actions/index';
+import { SET_USER, GET_USER } from '../actions/index';
 console.log(SET_USER)
 export default function (state = {}, action) {
-  console.log("SHOULD BE set_user: " + action.type);
   switch(action.type) {
     case SET_USER:
-      console.log("____ setting user _____")
-      console.log("__action.payload is: ");
       console.log(action);
-      return action.payload
+      console.log()
+      return action.payload.data
+    case GET_USER:
+      console.log("case GET_USER __")
+      console.log(action.payload.data);
+      return action.payload.data
     default:
-      console.log("___ default in user reducer ___")
-      console.log("__action.payload is: ");
       console.log(action)
       return state;
   }

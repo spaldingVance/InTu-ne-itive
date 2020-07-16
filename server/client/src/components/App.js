@@ -7,43 +7,57 @@ import PitchDetector from './PitchDetector';
 import Goals from './Goals';
 import "../styles/appStyle.css";
 import { v4 as uuidv4 } from 'uuid';
-import { setUser } from '../actions/index'
+import { setUser, getUser } from '../actions/index'
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 
-const userId = localStorage.getItem('my_user_id')
+let user_id = localStorage.getItem('my_user_id')
 
 class App extends React.Component {
   constructor(props) {
     super(props)
+
+    this.state = {
+      user_id: localStorage.getItem('my_user_id')
+    }
     // this.createUser = this.createUser.bind(this);
     console.log(this.props);
   }
 
-  createUser() {
-    console.log("creating a user _________")
+  componentDidMount() {
+    console.log("COMPONENET DID Mount-")
+    console.log(this.props.user_id);
+    if (this.state.user_id) {
+      console.log("USER ID IS " + this.state.user_id)
+      this.props.getUser(this.state.user_id)
+    }
+  }
+
+  componentDidUpdate() {
+    console.log("COMPONENET DID UPDATE-")
+    if (this.state.user_id) {
+      console.log("USER id IS: " + this.state.user_id)
+      this.props.getUser(this.state.user_id)
+    }
+  }
+
+  createUser(event) {
+    event.preventDefault();
     let id = uuidv4();
     localStorage.setItem('my_user_id', id)
-    // this.setState({user_id: id})
-    console.log("USER ID: " + id);
+    this.setState({ user_id: id })
     console.log(this.state.name);
     this.props.setUser(this.state.name, id);
+    user_id = id;
   }
 
   addName(event) {
     event.preventDefault();
     let name = event.target.value;
-    if (name.length > 0 && name) {
-      console.log("NAME: " + name);
-      this.setState({ name: name }, () => console.log(this.state.name));
-    } else {
-      console.log("name; " + name)
-    }
+    this.setState({ name: name });
   }
   render() {
-    if (userId && 1 === 2) {
-      console.log("USER HAS ID: " + userId)
-      console.log("USER HAS NAME: " + this.state.name)
+    if (user_id && user_id.length > 0) {
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
@@ -58,7 +72,7 @@ class App extends React.Component {
             </Nav>
             <Navbar.Collapse className="justify-content-end">
               <Navbar.Text>
-                Signed in as: <a href="#login">{this.state.name}</a>
+                Signed in as: <a href="#login">{this.props.userName}</a>
               </Navbar.Text>
             </Navbar.Collapse>
           </Navbar>
@@ -67,6 +81,7 @@ class App extends React.Component {
         </Container>
       );
     } else {
+      console.log(user_id)
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
@@ -99,15 +114,13 @@ class App extends React.Component {
 }
 
 function mapDispatchToProps(dispatch) {
-  console.log("dispatching ---0")
   return bindActionCreators(
-    { setUser },
+    { setUser, getUser },
     dispatch
   );
 }
 
 function mapStateToProps(state) {
-  console.log(state);
   return {
     userName: state.user.name,
     user_id: state.user.user_id

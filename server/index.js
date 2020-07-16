@@ -16,6 +16,11 @@ app.use(
   })
 );
 
+app.use(function(req, res, next) {
+  req.redis = client;
+  next();
+});
+
 router(app);
 
 // if (process.env.NODE_ENV === "production") {
@@ -39,5 +44,7 @@ const client = redis.createClient(redis_port);
 
 const server = http.createServer(app);
 
+
 server.listen(port);
 console.log("Server listening on:", port);
+
