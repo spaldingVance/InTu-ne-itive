@@ -33,13 +33,15 @@ class App extends React.Component {
     }
   }
 
-  componentDidUpdate() {
-    console.log("COMPONENET DID UPDATE-")
-    if (this.state.user_id) {
-      console.log("USER id IS: " + this.state.user_id)
-      this.props.getUser(this.state.user_id)
-    }
-  }
+  // componentDidUpdate() {
+  //   console.log("COMPONENET DID UPDATE-")
+  //   if (this.state.user_id && !this.props.userName) {
+  //     console.log("component updating");
+  //     console.log(this.props.userName)
+  //     console.log("USER id IS: " + this.state.user_id)
+  //     this.props.getUser(this.state.user_id)
+  //   }
+  // }
 
   createUser(event) {
     event.preventDefault();
@@ -123,7 +125,10 @@ function mapDispatchToProps(dispatch) {
 function mapStateToProps(state) {
   return {
     userName: state.user.name,
-    user_id: state.user.user_id
+    user_id: state.user.user_id,
+    intervalAcc: state.intervalAcc,
+    pitchAcc: state.pitchAcc,
+    noteAcc: state.noteAcc
   };
 }
 

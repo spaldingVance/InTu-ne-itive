@@ -1,6 +1,7 @@
 import React from 'react';
 import { connect } from "react-redux";
-
+import { bindActionCreators } from "redux";
+import { setIntervalAcc, setNoteAcc, setPitchAcc } from '../actions/index'
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 var audioContext = null;
@@ -124,12 +125,19 @@ class PitchDetector extends React.Component {
 
     let avgCentsOff = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += Math.abs(cur)) / averages.length;
     console.log("AVERAGE CENTS OFF: " + avgCentsOff);
+    let pitchAccuracy = 100 - avgCentsOff;
+
+    this.props.setPitchAcc(this.props.user_id, pitchAccuracy)
 
     let avgCentsOffRelative = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += cur) / averages.length;
     let centsOffPerNote = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note));
     console.log("avg cents off relative _________")
     console.log(avgCentsOffRelative);
     console.log(centsOffPerNote);
+
+    let noteAccuracy = centsOffPerNote.filter(centsOffNote => centsOffNote < 50 && centsOffNote > -50).length / centsOffPerNote.length * 100;
+    console.log("note accuracy: " + noteAccuracy);
+    this.props.setNoteAcc(this.props.user_id, noteAccuracy);
 
     console.log(window1);
     console.log(window2);
@@ -148,6 +156,13 @@ class PitchDetector extends React.Component {
     let intervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]) - centsOffPerNote[0] ) } })
     console.log("INTERVAL ACCURACY");
     console.log(intervalAccuracy);
+    console.log(intervals);
+    intervalAccuracy.forEach(interval => {
+      let accuracy = (100 - Math.abs(interval.centsOff));
+      console.log("accuracy: " + accuracy)
+      this.props.setIntervalAcc(this.props.user_id, accuracy, interval.interval)
+    })
+    
 
     // let relativeIntervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]))}})
     // console.log("INTERVAL ACCURACY");
@@ -611,14 +626,22 @@ function viewPitchArr() {
   console.log(pitchArr);
 }
 
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(
+    { setIntervalAcc, setPitchAcc, setNoteAcc },
+    dispatch
+  );
+}
+
 
 function mapStateToProps(state) {
   return {
     exercise: state.exercise.abc,
-    midi: state.exerciseMidi.midi
+    midi: state.exerciseMidi.midi,
+    user_id: state.user.user_id
 
   };
 }
 
 
-export default connect(mapStateToProps, null)(PitchDetector);
+export default connect(mapStateToProps, mapDispatchToProps)(PitchDetector);

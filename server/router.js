@@ -44,31 +44,61 @@ module.exports = function (router) {
   //set interval accuracy
   router.put("/api/user/:userId/intervalAcc/:interval", (request, response, next) => {
     let interval = request.params.interval;
-    let acc = request.body.accuracy;
+    let acc = request.body.acc;
     let userId = request.params.userId
     let redisPath = `${userId}:${interval}`
+    console.log("interval: " + interval);
+    console.log("acc: " + acc);
+    console.log(request.body)
+    console.log("redis path: " + redisPath);
     request.redis.lpush(redisPath, acc, function(err, reply) {
-      response.send(reply);
+      response.send({length: reply});
     });
   })
 
   //set note accuracy
   router.put("/api/user/:userId/noteAcc", (request, response, next) => {
-    let acc = request.body.accuracy;
+    let acc = request.body.acc;
     let userId = request.params.userId;
     let redisPath = `${userId}:noteAcc`;
     request.redis.lpush(redisPath, acc, function(err, reply) {
-      response.send(reply);
+      response.send({length: reply});
     })
   })
 
   //set pitch accuracy
   router.put("/api/user/:userId/pitchAcc", (request, response, next) => {
-    let acc = request.body.accuracy;
+    let acc = request.body.acc;
     let userId = request.params.userId;
     let redisPath = `${userId}:pitchAcc`;
     request.redis.lpush(redisPath, acc, function(err, reply) {
-      response.send(reply);
+      response.send({length: reply});
+    })
+  })
+
+  //get interval accuracy
+  router.get("/api/user/:userId/intervalAcc/:interval", (request, response, next) => {
+    let interval = request.params.interval;
+    let userId = request.params.userId
+    let redisPath = `${userId}:${interval}`
+    request.redis.lrange(redisPath, 0, 100, function(err, reply) {
+      response.send({interval: interval, acc: reply})
+    })
+  })
+
+  router.get("/api/user/:userId/noteAcc", (request, response, next) => {
+    let userId = request.params.userId
+    let redisPath = `${userId}:noteAcc`;
+    request.redis.lrange(redisPath, 0, 100, function(err, reply) {
+      response.send(reply)
+    })
+  })
+
+  router.get("/api/user/:userId/pitchAcc", (request, response, next) => {
+    let userId = request.params.userId
+    let redisPath = `${userId}:pitchAcc`;
+    request.redis.lrange(redisPath, 0, 100, function(err, reply) {
+      response.send(reply)
     })
   })
 }

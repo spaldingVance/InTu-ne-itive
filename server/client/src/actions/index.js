@@ -6,6 +6,9 @@ export const GET_USER = "GET_USER";
 export const SET_INTERVAL_ACC = "SET_INTERVAL_ACC";
 export const SET_PITCH_ACC = "SET_PITCH_ACC";
 export const SET_NOTE_ACC = "SET_NOTE_ACC";
+export const GET_INTERVAL_ACC = "GET_INTERVAL_ACC";
+export const GET_PITCH_ACC = "GET_PITCH_ACC";
+export const GET_NOTE_ACC = "GET_NOTE_ACC";
 
 export function getExercise(level) {
   const url = `http://localhost:5000/api/exercise/${level}`;
@@ -55,6 +58,8 @@ export function setIntervalAcc(user_id, accuracy, interval) {
       acc: accuracy
     }
   })
+  console.log("interval accuracy?????: " + accuracy);
+  console.log(interval);
   return {
     type: SET_INTERVAL_ACC,
     payload: request
@@ -91,6 +96,29 @@ export function setNoteAcc(user_id, accuracy) {
   }
 }
 
-export function getIntervalAcc(user_id, interval, maxLength) {
-  
-} 
+export function getIntervalAcc(user_id, interval) {
+  const url = `http://localhost:5000/api/user/${user_id}/intervalAcc/${interval}`;
+  const request = axios.get(url);
+  return {
+    type: GET_INTERVAL_ACC,
+    payload: request
+  }
+}
+
+export function getNoteAcc(user_id) {
+  const url = `http://localhost:5000/api/user/${user_id}/noteAcc`;
+  const request = axios.get(url);
+  return {
+    type: GET_NOTE_ACC,
+    payload: request
+  }
+}
+
+export function getPitchAcc(user_id) {
+  const url = `http://localhost:5000/api/user/${user_id}/pitchAcc`;
+  const request = axios.get(url);
+  return {
+    type: GET_PITCH_ACC,
+    payload: request
+  }
+}
