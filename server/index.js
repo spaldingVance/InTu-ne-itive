@@ -23,22 +23,22 @@ app.use(function(req, res, next) {
 
 router(app);
 
-// if (process.env.NODE_ENV === "production") {
-//   // Express will serve up production assets
-//   // like our main.js file, or main.css file!
-//   app.use(express.static("client/build"));
+if (process.env.NODE_ENV === "production") {
+  // Express will serve up production assets
+  // like our main.js file, or main.css file!
+  app.use(express.static("client/build"));
 
-//   // Express will serve up the index.html file
-//   // if it doesn't recognize the route
-//   const path = require("path");
-//   app.get("*", (req, res) => {
-//     res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
-//   });
-// }
+  // Express will serve up the index.html file
+  // if it doesn't recognize the route
+  const path = require("path");
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "client", "build", "index.html"));
+  });
+}
 
 
 const port = process.env.PORT || 5000;
-const redis_port = process.env.PORT || 6379;
+const redis_port = process.env.REDIS_URL || 6379;
 
 const client = redis.createClient(redis_port);
 
