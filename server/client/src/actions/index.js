@@ -13,8 +13,14 @@ export const GET_BADGES = "GET_BADGES";
 export const SET_BADGE = "SET_BADGE";
 export const GET_INTERVAL_EXERCISE = "GET_INTERVAL_EXERCISE"
 export const LEVEL_UP = "LEVEL_UP";
+export const SET_TIMESTAMPS = "SET_TIMESTAMPS"
 
-
+export function setTimeStamps(timeStamps) {
+  return {
+    type: SET_TIMESTAMPS,
+    payload: timeStamps
+  }
+}
 export function levelUp(user_id, currentLevel) {
   const url = `http://localhost:5000/api/user/${user_id}/levelup/${currentLevel + 1}`
   const request = axios({
@@ -83,10 +89,10 @@ export function setIntervalAcc(user_id, accuracy, interval) {
     method: 'put',
     url: url,
     data: {
-      acc: accuracy
+      acc: Math.abs(accuracy)
     }
   })
-  console.log("interval accuracy?????: " + accuracy);
+  console.log("interval accuracy?????: " + Math.abs(accuracy));
   console.log(interval);
   return {
     type: SET_INTERVAL_ACC,
@@ -100,7 +106,7 @@ export function setPitchAcc(user_id, accuracy) {
     method: 'put',
     url: url,
     data: {
-      acc: accuracy
+      acc: Math.abs(accuracy)
     }
   })
   return {

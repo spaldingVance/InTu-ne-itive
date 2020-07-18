@@ -10,6 +10,8 @@ module.exports = function (router) {
     let cumulative = getCumulativeIntervals(midiIntervals)
     let abcData = translateIntervalsToAbc(cumulative);
     const noteLength = "[L:1/4] "
+    console.log("cmulative for level exercise");
+    console.log(cumulative)
     response.send({ abc: (noteLength + abcData), midi: cumulative });
   })
 
@@ -24,7 +26,7 @@ module.exports = function (router) {
     let abcData = translateIntervalsToAbc(cumulative);
     console.log(abcData);
     const noteLength = "[L:1/4] "
-    response.send({ abc: (noteLength + abcData), midi: midiIntervals });
+    response.send({ abc: (noteLength + abcData), midi: cumulative });
   })
 
   router.post("/api/user/:userId", (request, response, next) => {
@@ -133,7 +135,11 @@ module.exports = function (router) {
 
   router.post("/api/user/:userId/levelup/:targetLevel", (request, response, next) => {
     let userId = request.params.userId;
-    let targetLevel = request.params.targetLevel;
+    let targetLevel = Number(request.params.targetLevel);
+    let preReqs = findPrereqs(targetLevel);
+    preReqs.forEach(preReq => {
+      request.redis.set(`${userId}:${preReq}`, "unlocked")
+    })
     let redisPath = `${userId}:level`;
     request.redis.set(redisPath, targetLevel, function(err, level) {
       request.redis.del(`${userId}:pitchAcc`, `${userId}:noteAcc`, function(err, reply) {
@@ -181,6 +187,37 @@ function findMaxInterval(level) {
       break;
   }
   return maxInterval;
+}
+
+function findPrereqs(level) {
+  switch (level) {
+    case 2:
+      return ['badge3', 'badge4']
+      break;
+    case 3:
+      return ['badge5']
+      break;
+    case 4:
+      return ['badge6']
+      break;
+    case 5:
+      return ['badge7']
+      break;
+    case 6:
+      //interval8 interval9
+      return ['badge8', 'badge9']
+      break;
+    case 7:
+      //interval10 interval11
+      return ['badge10', 'badge11']
+      break;
+    case 8:
+      return ['badge12']
+      break;
+    default:
+      return []
+      break;
+  }
 }
 
 function generateMidi(maxInterval) {

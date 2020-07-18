@@ -4,7 +4,7 @@ import { Line, Bar } from 'react-chartjs-2';
 import { Row, Container, Col, Image, ProgressBar, Button, Card, Carousel } from 'react-bootstrap';
 import "../styles/goalStyle.css";
 import { bindActionCreators } from "redux";
-import { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser, getBadges, setBadge } from '../actions/index'
+import { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser, getBadges, setBadge, levelUp } from '../actions/index'
 import medalicon from "../assets/medalicon.png";
 import check from "../assets/check.png";
 import { Link } from "react-router-dom";
@@ -43,7 +43,8 @@ let noteGoalOptions = {
   scales: {
     yAxes: [{
       ticks: {
-        suggestedMax: 100
+        suggestedMax: 100,
+        suggestedMind: 20
       }
     }],
     xAxes: [{
@@ -65,7 +66,8 @@ let pitchGoalOptions = {
   scales: {
     yAxes: [{
       ticks: {
-        suggestedMax: 100
+        suggestedMax: 100,
+        suggestedMin: 20
       }
     }],
     xAxes: [{
@@ -80,31 +82,6 @@ let pitchGoalOptions = {
   },
   maintainAspectRatio: false,
   responsive: false
-}
-
-let pitchGoalData = {
-  labels: [1, 2, 3, 4, 5, 6, 7, 8],
-  datasets: [{
-    label: "Pitch Accuracy",
-    data: [50, 60, 55, 73, 60, 55, 70, 75],
-    fill: false,
-    borderColor: "#f7b307"
-  },
-  {
-    label: "Pitch Accuracy Goal",
-    data: [80, 80, 80, 80, 80, 80, 80, 80],
-    fill: false,
-    borderColor: "#32a852"
-  }]
-}
-
-let intervalAccuracyData = {
-  labels: ["m2", "M2", "m3", "M3", "P4", "TT", "P5", "m6", 'M6', 'm7', 'M7', 'P8'],
-  datasets: [{
-    label: "Interval Accuracy",
-    data: [90, 90, 80, 85, 80, 70, 75, 80, 60, 70, 80, 95],
-    backgroundColor: "#32a852"
-  }]
 }
 
 let intervalAccuracyOptions = {
@@ -154,7 +131,7 @@ class Goals extends React.Component {
     this.buildNoteGoalData = this.buildNoteGoalData.bind(this);
     this.buildIntervalGoalData = this.buildIntervalGoalData.bind(this);
   }
-  
+
 
   buildNoteGoalData() {
     console.log(this.props.noteAcc)
@@ -188,7 +165,7 @@ class Goals extends React.Component {
       },
       {
         label: "Pitch Accuracy Goal",
-        data: this.props.pitchAcc.map(pitch => 80),
+        data: this.props.pitchAcc.map(pitch => 70),
         fill: false,
         borderColor: "#32a852"
       }]
@@ -289,7 +266,6 @@ class Goals extends React.Component {
     // console.log(data);
     data = data.map(dataArr => {
       if (dataArr && dataArr.length > 0) {
-        console.log(dataArr);
         return dataArr.reduce((acc, cur) => acc += Number(cur), 0) / dataArr.length;
       } else {
         return 0;
@@ -326,22 +302,53 @@ class Goals extends React.Component {
   }
 
   componentDidUpdate() {
-    if(this.props.noteAcc.length > 10) {
+    if (this.props.noteAcc.length > 10) {
       let noteAcc = this.props.noteAcc.slice(this.props.noteAcc.length - 10);
-      if((noteAcc.reduce((acc, cur) => acc += cur) / 10) > 90) {
-        this.setState({noteAccGoalReached: true})
+      if ((noteAcc.reduce((acc, cur) => acc += cur) / 10) > 90) {
+        this.setState({ noteAccGoalReached: true })
       }
     }
 
-    if(this.props.pitchAcc.length > 10) {
+    if (this.props.pitchAcc.length > 10) {
       let pitchAcc = this.props.pitchAcc.slice(this.props.pitchAcc.length - 10);
-      if((pitchAcc.reduce((acc, cur) => acc += cur) / 10) > 60) {
-        this.setState({pitchAccGoalReached: true})
+      if ((pitchAcc.reduce((acc, cur) => acc += cur) / 10) > 70) {
+        this.setState({ pitchAccGoalReached: true })
       }
     }
-    if(this.state.pitchAccGoalReached && this.state.noteAccGoalReached) {
-      
+    let unlockedBadges = Object.entries(this.props.badges).filter(badge => badge[1] === "unlocked")
+
+    let numUnlockedBadges = unlockedBadges.length;
+    if (this.state.pitchAccGoalReached && this.state.noteAccGoalReached && numUnlockedBadges === 0) {
+      this.props.levelUp(this.state.user_id, this.state.level);
     }
+
+    let intervalBadges = unlockedBadges.map(badge => badgeIntervals[badge[0]])
+    console.log("interval acc");
+    console.log(this.props.intervalAcc);
+    console.log('interval badges +++++++++');
+    console.log(intervalBadges);
+    intervalBadges.forEach(interval => {
+      if (this.props.intervalAcc[interval] && this.props.intervalAcc[0 - interval]) {
+        let intervalAcc = this.props.intervalAcc[interval].slice();
+        let negIntervalAcc = this.props.intervalAcc[0 - interval].slice();
+        if (intervalAcc.length >= 5 || negIntervalAcc.length >= 5) {
+
+
+          intervalAcc = intervalAcc.slice(intervalAcc.length - 5);
+
+          negIntervalAcc = negIntervalAcc.slice(negIntervalAcc.length - 5);
+          intervalAcc = intervalAcc.concat(negIntervalAcc)
+          if ((intervalAcc.reduce((acc, cur) => acc += cur) / 10) >= 60) {
+            console.log("interval passed");
+            console.log(interval);
+            let badgeForInterval = Object.entries(badgeIntervals).find(badgeInterval => badgeInterval[1] === interval)[0];
+            this.props.setBadge(this.props.user_id, badgeForInterval, "completed");
+          }
+        }
+      }
+    })
+
+
   }
 
   render() {
@@ -439,14 +446,16 @@ class Goals extends React.Component {
               {this.state.showNoteAccGraph ?
                 <Col md={{ span: 4 }} className="note-goal-data border rounded border-dark">
                   <h4>Note Accuracy</h4>
-                  <br/>
+                  <br />
                   <Line data={this.buildNoteGoalData()} options={noteGoalOptions} height={300} />
                   <br />
                   <Button onClick={() => this.setState({ showNoteAccGraph: false })}>View Progress Over Time</Button>
                 </Col> :
                 <Col md={{ span: 4 }} className="note-goal-data border rounded border-dark">
                   <h4>Note Accuracy</h4>
-                  <br/>
+                  <h6>Number of Exercises: {this.props.noteAcc.length}</h6>
+                  <h6>10 Needed to Level Up</h6>
+                  <br />
                   {this.state.noteAccGoalReached ? <Image src={check}></Image> : ""}
                   <ProgressBar now={Math.floor(this.props.noteAcc[this.props.noteAcc.length - 1] / 90 * 100)} label={Math.floor(this.props.noteAcc[this.props.noteAcc.length - 1] / 90 * 100) ? `${Math.floor(this.props.noteAcc[this.props.noteAcc.length - 1] / 90 * 100)}%` : ""} />
                   <br />
@@ -470,9 +479,11 @@ class Goals extends React.Component {
                 </Col> :
                 <Col md={{ span: 4 }} className="pitch-goal-data border rounded border-dark">
                   <h4>Pitch Accuracy</h4>
-                  <br/>
+                  <h6>Number of Exercises: {this.props.pitchAcc.length}</h6>
+                  <h6>10 Needed to Level Up</h6>
+                  <br />
                   {this.state.pitchAccGoalReached ? <Image src={check}></Image> : ""}
-                  <ProgressBar now={Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 90 * 100)} label={Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 90 * 100) ? `${Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 90 * 100)}%` : ""} />
+                  <ProgressBar now={Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 70 * 100)} label={Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 70 * 100) ? `${Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 70 * 100)}%` : ""} />
                   <br />
                   <Button onClick={() => this.setState({ showPitchAccGraph: true })}>View Completion Percentage</Button>
                 </Col>
@@ -495,7 +506,7 @@ class Goals extends React.Component {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser, getBadges, setBadge },
+    { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser, getBadges, setBadge, levelUp },
     dispatch
   );
 }

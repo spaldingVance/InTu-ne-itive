@@ -29,7 +29,8 @@ var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "
 class PitchDetector extends React.Component {
   constructor(props) {
     super(props)
-    console.log("pitch detector props: " + this.props);
+    console.log("pitch detector props: ");
+    console.log(this.props)
 
     this.getTimeWindowPitches = this.getTimeWindowPitches.bind(this);
   }
@@ -74,95 +75,108 @@ class PitchDetector extends React.Component {
     console.log("C SHOULD BE: " + frequencyFromNoteNumber(midiNotes[0] - 6));
     let averages = [];
 
-    let avg1 = window1.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window1.length;
-    let avg2 = window2.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window2.length;
-    let avg3 = window3.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window3.length;
-    let avg4 = window4.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window4.length;
-    let avg5 = window5.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window5.length;
-    let avg6 = window6.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window6.length;
-    let avg7 = window7.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window7.length;
-    let avg8 = window8.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window8.length;
-
-    averages.push(avg1, avg2, avg3, avg4, avg5, avg6, avg7, avg8);
-
-    let note1 = noteFromPitch(avg1);
-    let note2 = noteFromPitch(avg2);
-    let note3 = noteFromPitch(avg3);
-    let note4 = noteFromPitch(avg4);
-    let note5 = noteFromPitch(avg5);
-    let note6 = noteFromPitch(avg6);
-    let note7 = noteFromPitch(avg7);
-    let note8 = noteFromPitch(avg8);
+    if (window1.length === 0 || window2.length === 0 || window3.length === 0 || window4.length === 0) {
+      alert("Not enough audio collected. Try moving closer to the mic.")
+    } else if (window5.length === 0 || window6.length === 0 || window7.length === 0 || window8.lengh === 0) {
+      alert("Not enough audio collected. Try moving closer to the mic.")
+    } else {
 
 
 
-    console.log("avg1: " + avg1 + " " + noteFromPitch(avg1));
-    console.log("avg2: " + avg2 + " " + noteFromPitch(avg2));
-    console.log("avg3: " + avg3 + " " + noteFromPitch(avg3));
-    console.log("avg4: " + avg4 + " " + noteFromPitch(avg4));
-    console.log("avg5: " + avg5 + " " + noteFromPitch(avg5));
-    console.log("avg6: " + avg6 + " " + noteFromPitch(avg6));
-    console.log("avg7: " + avg7 + " " + noteFromPitch(avg7));
-    console.log("avg8: " + avg8 + " " + noteFromPitch(avg8));
+      let avg1 = window1.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window1.length;
+      let avg2 = window2.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window2.length;
+      let avg3 = window3.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window3.length;
+      let avg4 = window4.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window4.length;
+      let avg5 = window5.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window5.length;
+      let avg6 = window6.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window6.length;
+      let avg7 = window7.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window7.length;
+      let avg8 = window8.map(pitch => pitch.pitch).reduce((acc, cur) => acc + cur) / window8.length;
 
-    console.log(noteStrings[note1 % 12]);
-    console.log(noteStrings[note2 % 12]);
-    console.log(noteStrings[note3 % 12]);
-    console.log(noteStrings[note4 % 12]);
-    console.log(noteStrings[note5 % 12]);
-    console.log(noteStrings[note6 % 12]);
-    console.log(noteStrings[note7 % 12]);
-    console.log(noteStrings[note8 % 12]);
+      averages.push(avg1, avg2, avg3, avg4, avg5, avg6, avg7, avg8);
 
-    console.log("cents off: " + centsOffFromPitch(avg1, midiNotes[0]));
-    console.log("cents off: " + centsOffFromPitch(avg2, midiNotes[1]));
-    console.log("cents off: " + centsOffFromPitch(avg3, midiNotes[2]));
-    console.log("cents off: " + centsOffFromPitch(avg4, midiNotes[3]));
-    console.log("cents off: " + centsOffFromPitch(avg5, midiNotes[4]));
-    console.log("cents off: " + centsOffFromPitch(avg6, midiNotes[5]));
-    console.log("cents off: " + centsOffFromPitch(avg7, midiNotes[6]));
-    console.log("cents off: " + centsOffFromPitch(avg8, midiNotes[7]));
+      let note1 = noteFromPitch(avg1);
+      let note2 = noteFromPitch(avg2);
+      let note3 = noteFromPitch(avg3);
+      let note4 = noteFromPitch(avg4);
+      let note5 = noteFromPitch(avg5);
+      let note6 = noteFromPitch(avg6);
+      let note7 = noteFromPitch(avg7);
+      let note8 = noteFromPitch(avg8);
 
-    let avgCentsOff = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += Math.abs(cur)) / averages.length;
-    console.log("AVERAGE CENTS OFF: " + avgCentsOff);
-    let pitchAccuracy = 100 - avgCentsOff;
 
-    this.props.setPitchAcc(this.props.user_id, pitchAccuracy)
 
-    let avgCentsOffRelative = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += cur) / averages.length;
-    let centsOffPerNote = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note));
-    console.log("avg cents off relative _________")
-    console.log(avgCentsOffRelative);
-    console.log(centsOffPerNote);
+      console.log("avg1: " + avg1 + " " + noteFromPitch(avg1));
+      console.log("avg2: " + avg2 + " " + noteFromPitch(avg2));
+      console.log("avg3: " + avg3 + " " + noteFromPitch(avg3));
+      console.log("avg4: " + avg4 + " " + noteFromPitch(avg4));
+      console.log("avg5: " + avg5 + " " + noteFromPitch(avg5));
+      console.log("avg6: " + avg6 + " " + noteFromPitch(avg6));
+      console.log("avg7: " + avg7 + " " + noteFromPitch(avg7));
+      console.log("avg8: " + avg8 + " " + noteFromPitch(avg8));
 
-    let noteAccuracy = centsOffPerNote.filter(centsOffNote => centsOffNote < 50 && centsOffNote > -50).length / centsOffPerNote.length * 100;
-    console.log("note accuracy: " + noteAccuracy);
-    this.props.setNoteAcc(this.props.user_id, noteAccuracy);
+      console.log(noteStrings[note1 % 12]);
+      console.log(noteStrings[note2 % 12]);
+      console.log(noteStrings[note3 % 12]);
+      console.log(noteStrings[note4 % 12]);
+      console.log(noteStrings[note5 % 12]);
+      console.log(noteStrings[note6 % 12]);
+      console.log(noteStrings[note7 % 12]);
+      console.log(noteStrings[note8 % 12]);
 
-    console.log(window1);
-    console.log(window2);
-    console.log(window3);
-    console.log(window4);
-    console.log(window5);
-    console.log(window6);
-    console.log(window7);
-    console.log(window8);
+      console.log("cents off: " + centsOffFromPitch(avg1, midiNotes[0]));
+      console.log("cents off: " + centsOffFromPitch(avg2, midiNotes[1]));
+      console.log("cents off: " + centsOffFromPitch(avg3, midiNotes[2]));
+      console.log("cents off: " + centsOffFromPitch(avg4, midiNotes[3]));
+      console.log("cents off: " + centsOffFromPitch(avg5, midiNotes[4]));
+      console.log("cents off: " + centsOffFromPitch(avg6, midiNotes[5]));
+      console.log("cents off: " + centsOffFromPitch(avg7, midiNotes[6]));
+      console.log("cents off: " + centsOffFromPitch(avg8, midiNotes[7]));
 
-    let intervals = [];
-    for (let i = 1; i < midiNotes.length; i++) {
-      intervals.push(midiNotes[i] - midiNotes[i - 1]);
+      let avgCentsOff = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += Math.abs(cur)) / averages.length;
+      console.log("AVERAGE CENTS OFF: " + avgCentsOff);
+      let pitchAccuracy = 100 - avgCentsOff;
+      if (!this.props.intervalEx) {
+        this.props.setPitchAcc(this.props.user_id, pitchAccuracy)
+      }
+
+      let avgCentsOffRelative = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += cur) / averages.length;
+      let centsOffPerNote = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note));
+      console.log("avg cents off relative _________")
+      console.log(avgCentsOffRelative);
+      console.log(centsOffPerNote);
+
+      let noteAccuracy = centsOffPerNote.filter(centsOffNote => centsOffNote < 50 && centsOffNote > -50).length / centsOffPerNote.length * 100;
+      console.log("note accuracy: " + noteAccuracy);
+      if (!this.props.intervalEx) {
+        this.props.setNoteAcc(this.props.user_id, noteAccuracy);
+      }
+
+      console.log(window1);
+      console.log(window2);
+      console.log(window3);
+      console.log(window4);
+      console.log(window5);
+      console.log(window6);
+      console.log(window7);
+      console.log(window8);
+      if (this.props.intervalEx) {
+        let intervals = [];
+        for (let i = 1; i < midiNotes.length; i++) {
+          intervals.push(midiNotes[i] - midiNotes[i - 1]);
+        }
+
+        let intervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]) - centsOffPerNote[0]) } })
+        console.log("INTERVAL ACCURACY");
+        console.log(intervalAccuracy);
+        console.log(intervals);
+        intervalAccuracy.forEach(interval => {
+          let accuracy = (100 - Math.abs(interval.centsOff)) % 100;
+          console.log("accuracy: " + accuracy)
+          this.props.setIntervalAcc(this.props.user_id, accuracy, interval.interval)
+        })
+
+      }
     }
-
-    let intervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]) - centsOffPerNote[0] ) } })
-    console.log("INTERVAL ACCURACY");
-    console.log(intervalAccuracy);
-    console.log(intervals);
-    intervalAccuracy.forEach(interval => {
-      let accuracy = (100 - Math.abs(interval.centsOff));
-      console.log("accuracy: " + accuracy)
-      this.props.setIntervalAcc(this.props.user_id, accuracy, interval.interval)
-    })
-    
 
     // let relativeIntervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]))}})
     // console.log("INTERVAL ACCURACY");
@@ -422,18 +436,20 @@ const MaxPitch = 2000;
 const MinPitch = 98;
 
 function updatePitch(time) {
-  analyser.getFloatTimeDomainData(buf);
-  var ac = autoCorrelate(buf, audioContext.sampleRate);
-  if (ac == -1) {
+  if (analyser) {
+    analyser.getFloatTimeDomainData(buf);
+    var ac = autoCorrelate(buf, audioContext.sampleRate);
+    if (ac == -1) {
 
-  } else {
-    let pitch = ac;
-    if (pitch > MinPitch && pitch < MaxPitch) {
-      pitchArr.push({ pitch: pitch, time: performance.now() });
+    } else {
+      let pitch = ac;
+      if (pitch > MinPitch && pitch < MaxPitch) {
+        pitchArr.push({ pitch: pitch, time: performance.now() });
+      }
+      var note = noteFromPitch(pitch);
+      // findNextPitch(noteStrings[note % 12]);
+      var detune = centsOffFromPitch(pitch, note);
     }
-    var note = noteFromPitch(pitch);
-    // findNextPitch(noteStrings[note % 12]);
-    var detune = centsOffFromPitch(pitch, note);
   }
 }
 
@@ -638,7 +654,8 @@ function mapStateToProps(state) {
   return {
     exercise: state.exercise.abc,
     midi: state.exerciseMidi.midi,
-    user_id: state.user.user_id
+    user_id: state.user.user_id,
+    timeStamps: state.timeStamps
 
   };
 }
