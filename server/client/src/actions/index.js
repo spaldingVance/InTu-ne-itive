@@ -22,7 +22,7 @@ export function setTimeStamps(timeStamps) {
   }
 }
 export function levelUp(user_id, currentLevel) {
-  const url = `http://localhost:5000/api/user/${user_id}/levelup/${currentLevel + 1}`
+  const url = `/api/user/${user_id}/levelup/${currentLevel + 1}`
   const request = axios({
     method: 'post',
     url: url
@@ -35,7 +35,7 @@ export function levelUp(user_id, currentLevel) {
 }
 
 export function getExercise(level) {
-  const url = `http://localhost:5000/api/exercise/${level}`;
+  const url = `/api/exercise/${level}`;
   const request = axios.get(url);
 
   return {
@@ -45,7 +45,7 @@ export function getExercise(level) {
 }
 
 export function getIntervalExercise(interval) {
-  const url = `http://localhost:5000/api/intervals/${interval}`;
+  const url = `/api/intervals/${interval}`;
   console.log("GETTING INTERVAL EXERCISE")
   const request = axios.get(url);
   return {
@@ -55,7 +55,7 @@ export function getIntervalExercise(interval) {
 }
 
 export function setUser(name, user_id) {
-  const url = `http://localhost:5000/api/user/${user_id}`;
+  const url = `/api/user/${user_id}`;
   const request = axios({
     method: 'post',
     url: url,
@@ -74,7 +74,7 @@ export function setUser(name, user_id) {
 }
 
 export function getUser(user_id) {
-  const url = `http://localhost:5000/api/user/${user_id}`;
+  const url = `/api/user/${user_id}`;
   const request = axios.get(url);
   console.log("getting user in actions !")
   return {
@@ -84,7 +84,7 @@ export function getUser(user_id) {
 }
 
 export function setIntervalAcc(user_id, accuracy, interval) {
-  const url = `http://localhost:5000/api/user/${user_id}/intervalAcc/${interval}`;
+  const url = `/api/user/${user_id}/intervalAcc/${interval}`;
   const request = axios({
     method: 'put',
     url: url,
@@ -101,7 +101,7 @@ export function setIntervalAcc(user_id, accuracy, interval) {
 }
 
 export function setPitchAcc(user_id, accuracy) {
-  const url = `http://localhost:5000/api/user/${user_id}/pitchAcc`;
+  const url = `/api/user/${user_id}/pitchAcc`;
   const request = axios({
     method: 'put',
     url: url,
@@ -116,7 +116,7 @@ export function setPitchAcc(user_id, accuracy) {
 }
 
 export function setNoteAcc(user_id, accuracy) {
-  const url = `http://localhost:5000/api/user/${user_id}/noteAcc`;
+  const url = `/api/user/${user_id}/noteAcc`;
   const request = axios({
     method: 'put',
     url: url,
@@ -131,7 +131,7 @@ export function setNoteAcc(user_id, accuracy) {
 }
 
 export function getIntervalAcc(user_id, interval) {
-  const url = `http://localhost:5000/api/user/${user_id}/intervalAcc/${interval}`;
+  const url = `/api/user/${user_id}/intervalAcc/${interval}`;
   const request = axios.get(url);
   return {
     type: GET_INTERVAL_ACC,
@@ -140,7 +140,7 @@ export function getIntervalAcc(user_id, interval) {
 }
 
 export function getNoteAcc(user_id) {
-  const url = `http://localhost:5000/api/user/${user_id}/noteAcc`;
+  const url = `/api/user/${user_id}/noteAcc`;
   const request = axios.get(url);
   return {
     type: GET_NOTE_ACC,
@@ -149,7 +149,7 @@ export function getNoteAcc(user_id) {
 }
 
 export function getPitchAcc(user_id) {
-  const url = `http://localhost:5000/api/user/${user_id}/pitchAcc`;
+  const url = `/api/user/${user_id}/pitchAcc`;
   const request = axios.get(url);
   return {
     type: GET_PITCH_ACC,
@@ -158,7 +158,7 @@ export function getPitchAcc(user_id) {
 }
 
 export function getBadges(user_id) {
-  const url = `http://localhost:5000/api/user/${user_id}/badges`;
+  const url = `/api/user/${user_id}/badges`;
   const request = axios.get(url);
   return {
     type: GET_BADGES,
@@ -167,7 +167,7 @@ export function getBadges(user_id) {
 }
 
 export function setBadge(user_id, badge, badgeStatus) {
-  const url = `http://localhost:5000/api/user/${user_id}/badges/${badge}`;
+  const url = `/api/user/${user_id}/badges/${badge}`;
   const request = axios({
     method: 'put',
     url: url,
