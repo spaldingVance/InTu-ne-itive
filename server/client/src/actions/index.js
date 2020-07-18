@@ -9,6 +9,9 @@ export const SET_NOTE_ACC = "SET_NOTE_ACC";
 export const GET_INTERVAL_ACC = "GET_INTERVAL_ACC";
 export const GET_PITCH_ACC = "GET_PITCH_ACC";
 export const GET_NOTE_ACC = "GET_NOTE_ACC";
+export const GET_BADGES = "GET_BADGES";
+export const SET_BADGE = "SET_BADGE";
+export const GET_INTERVAL_EXERCISE = "GET_INTERVAL_EXERCISE"
 
 export function getExercise(level) {
   const url = `http://localhost:5000/api/exercise/${level}`;
@@ -16,6 +19,16 @@ export function getExercise(level) {
 
   return {
     type: GET_EXERCISE,
+    payload: request
+  }
+}
+
+export function getIntervalExercise(interval) {
+  const url = `http://localhost:5000/api/intervals/${interval}`;
+  console.log("GETTING INTERVAL EXERCISE")
+  const request = axios.get(url);
+  return {
+    type: GET_INTERVAL_EXERCISE,
     payload: request
   }
 }
@@ -122,3 +135,28 @@ export function getPitchAcc(user_id) {
     payload: request
   }
 }
+
+export function getBadges(user_id) {
+  const url = `http://localhost:5000/api/user/${user_id}/badges`;
+  const request = axios.get(url);
+  return {
+    type: GET_BADGES,
+    payload: request
+  }
+}
+
+export function setBadge(user_id, badge, badgeStatus) {
+  const url = `http://localhost:5000/api/user/${user_id}/badges/${badge}`;
+  const request = axios({
+    method: 'put',
+    url: url,
+    data: {
+      badgeStatus: badgeStatus
+    }
+  })
+  return {
+    type: SET_BADGE,
+    payload: request
+  }
+}
+

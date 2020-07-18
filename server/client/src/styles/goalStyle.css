@@ -18,3 +18,26 @@
   height: 100%;
 }
 
+.badge-carousel-item {
+ height: 350px;
+}
+
+.badge-carousel {
+  text-align: center;
+  margin-top: 5%;
+}
+
+.welcome-back {
+  text-align: center;
+  margin-top: 2%;
+}
+
+.card-title.h5 {
+  font-size: 14px;
+}
+
+
+
+
+
+

@@ -7,7 +7,7 @@ import { connect } from "react-redux";
 import Player from './Player';
 import PitchDetector from './PitchDetector';
 
-import { getExercise } from "../actions/index"
+import { getExercise, getIntervalExercise } from "../actions/index"
 import { Row, Container, Col } from 'react-bootstrap';
 
 const notation = 'C D E F  | G A B c|';
@@ -15,20 +15,20 @@ const engraverParams = { add_classes: true }
 
 let timeStamps = [];
 
-class Score extends React.Component {
+class IntervalScore extends React.Component {
   constructor(props) {
     super(props)
 
     this.state = {
       notation: "",
-      level: this.props.match.params.level
+      level: this.props.match.params.interval
     }
 
     this.loadExercise = this.loadExercise.bind(this);
   }
 
   loadExercise(level) {
-    this.props.getExercise(level);
+    this.props.getIntervalExercise(level);
     console.log(this.props.exercise);
   }
   render() {
@@ -36,7 +36,7 @@ class Score extends React.Component {
       console.log(this.props.exercise);
       return (
         <Container fluid>
-          <h1>Exercise Score</h1>
+          <h1>Interval Score</h1>
           <Row>
             <Col md={{ span: 8, offset: 2 }}>
               <Notation notation={this.props.exercise} engraverParams={engraverParams} />
@@ -133,9 +133,9 @@ function mapStateToProps(state) {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { getExercise },
+    { getIntervalExercise },
     dispatch
   );
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Score);
+export default connect(mapStateToProps, mapDispatchToProps)(IntervalScore);

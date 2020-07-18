@@ -3,6 +3,7 @@ import { Nav, Form, FormControl, Button, Container, Col, Row } from 'react-boots
 import Navbar from 'react-bootstrap/Navbar';
 import Player from './Player';
 import Score from './Score';
+import IntervalScore from './IntervalScore'
 import PitchDetector from './PitchDetector';
 import Goals from './Goals';
 import "../styles/appStyle.css";
@@ -10,6 +11,8 @@ import { v4 as uuidv4 } from 'uuid';
 import { setUser, getUser } from '../actions/index'
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
+import { Switch, Route } from "react-router-dom";
+
 
 let user_id = localStorage.getItem('my_user_id')
 
@@ -74,12 +77,17 @@ class App extends React.Component {
             </Nav>
             <Navbar.Collapse className="justify-content-end">
               <Navbar.Text>
-                Signed in as: <a href="#login">{this.props.userName}</a>
+                Signed in as: {this.props.userName} Level: {this.props.level}
               </Navbar.Text>
             </Navbar.Collapse>
           </Navbar>
+          <Switch>
+            <Route exact path={"/"} component={Goals} />
+            <Route path={"/exercises/level/:level"} component={Score} />
+            <Route path={"/exercises/intervals/:interval"} component={IntervalScore} />
+          </Switch>
           {/* <Score /> */}
-          <Goals />
+          {/* <Goals /> */}
         </Container>
       );
     } else {
@@ -105,7 +113,6 @@ class App extends React.Component {
                 <Button type="btn btn-primary" onClick={this.createUser.bind(this)}>Submit</Button>
               </Form>
             </Col>
-
           </Row>
           {/* <Score /> */}
           {/* <Goals /> */}
@@ -126,6 +133,7 @@ function mapStateToProps(state) {
   return {
     userName: state.user.name,
     user_id: state.user.user_id,
+    level: state.user.level,
     intervalAcc: state.intervalAcc,
     pitchAcc: state.pitchAcc,
     noteAcc: state.noteAcc

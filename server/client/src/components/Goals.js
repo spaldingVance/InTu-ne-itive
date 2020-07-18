@@ -1,11 +1,42 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { Line, Bar } from 'react-chartjs-2';
-import { Row, Container, Col, Image, ProgressBar, Button, Card } from 'react-bootstrap';
+import { Row, Container, Col, Image, ProgressBar, Button, Card, Carousel } from 'react-bootstrap';
 import "../styles/goalStyle.css";
 import { bindActionCreators } from "redux";
-import { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser } from '../actions/index'
+import { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser, getBadges, setBadge } from '../actions/index'
 import medalicon from "../assets/medalicon.png";
+import { Link } from "react-router-dom";
+
+const badgeNames = {
+  "badge1": "Minor 2nd Badge",
+  "badge2": "Major 2nd Badge",
+  "badge3": "Minor 3rd Badge",
+  "badge4": "Major 3rd Badge",
+  "badge5": "Perfect 4th Badge",
+  "badge6": "Tritone Badge",
+  "badge7": "Perfect 5th Badge",
+  "badge8": "Minor 6th Badge",
+  "badge9": "Major 6th Badge",
+  "badge10": "Minor 7th Badge",
+  "badge11": "Major 7th Badge",
+  "badge12": "Octave Badge"
+}
+
+const badgeIntervals = {
+  "badge1": 1,
+  "badge2": 2,
+  "badge3": 3,
+  "badge4": 4,
+  "badge5": 5,
+  "badge6": 6,
+  "badge7": 7,
+  "badge8": 8,
+  "badge9": 9,
+  "badge10": 10,
+  "badge11": 11,
+  "badge12": 12
+}
 
 let noteGoalOptions = {
   scales: {
@@ -81,7 +112,7 @@ let intervalAccuracyOptions = {
       ticks: {
         suggestedMax: 100,
         suggestedMin: 0,
-        
+
       }
     }],
     xAxes: [{
@@ -162,10 +193,10 @@ class Goals extends React.Component {
   }
 
   buildIntervalGoalData() {
-    if(Object.keys(this.props.intervalAcc).length === 0) return {};
-    console.log(this.props.intervalAcc);
+    if (Object.keys(this.props.intervalAcc).length === 0) return {};
+    // console.log(this.props.intervalAcc);
     let sortedIntervalAcc = Object.keys(this.props.intervalAcc).sort((a, b) => Number(a) - Number(b));
-    console.log(sortedIntervalAcc)
+    // console.log(sortedIntervalAcc)
     // sortedIntervalAcc = sortedIntervalAcc.forEach(key => {{key}: this.props.intervalAcc[key]});
     let intervalGoalDataset = sortedIntervalAcc.filter(key => key !== 0).map(key => {
       // console.log("key")
@@ -248,10 +279,10 @@ class Goals extends React.Component {
           return { "0": null }
       }
     })
-    console.log(intervalGoalDataset)
+    // console.log(intervalGoalDataset)
     let labels = intervalGoalDataset.map(data => Object.keys(data)[0]);
     let data = intervalGoalDataset.map(data => data[Object.keys(data)[0]])
-    console.log(data);
+    // console.log(data);
     data = data.map(dataArr => {
       if (dataArr && dataArr.length > 0) {
         console.log(dataArr);
@@ -260,9 +291,9 @@ class Goals extends React.Component {
         return 0;
       }
     });
-    console.log("interval goal dataset");
-    console.log(labels);
-    console.log(data);
+    // console.log("interval goal dataset");
+    // console.log(labels);
+    // console.log(data);
     let intervalAccuracyData = {
       labels: labels,
       datasets: [{
@@ -275,83 +306,110 @@ class Goals extends React.Component {
   }
 
   componentDidMount() {
-    console.log(this.state.user_id);
+    // console.log(this.state.user_id);
+    this.props.getBadges(this.state.user_id);
 
     this.props.getNoteAcc(this.state.user_id)
     this.props.getPitchAcc(this.state.user_id);
-    console.log("PROPS");
-    console.log(this.props);
+    // console.log("PROPS");
+    // console.log(this.props);
     for (let i = -12; i < 13; i++) {
       this.props.getIntervalAcc(this.state.user_id, i);
     }
-    console.log(this.props.intervalAcc);
+    // console.log(this.props.intervalAcc);
+    console.log("**** badges ****")
+    console.log(this.props.badges);
   }
+
   render() {
     return (
       <div>
         <Row>
-          <Col md={3}>
-            <h1>SIDEBAR</h1>
-          </Col>
-          <Col md={9}>
+
+          <Col md={{ span: 10, offset: 1 }}>
             <Row>
-              <Col md={{ span: 8 }} className="welcome-back">
-                <Row>
-                  <h1>Welcome Back {this.props.userName}!</h1>
-                </Row>
+              <Col md={{ span: 12 }} className="welcome-back">
+                <h1>Welcome Back {this.props.userName}!</h1>
               </Col>
             </Row>
             <Row>
-              <Col md={{ span: 8 }} className="welcome-back">
-                <Row>
-                  <Col md={{ span: 3 }}>
-                    <Card style={{ width: '100%' }}>
-                      <Card.Img variant="top" src={medalicon} />
-                      <Card.Body>
-                        <Card.Title>Minor Second Proficiency</Card.Title>
-                        <Card.Text>
-                        </Card.Text>
-                        <Button variant="primary">Train</Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={{ span: 3 }}>
-                    <Card style={{ width: '100%' }}>
-                      <Card.Img variant="top" src={medalicon} />
-                      <Card.Body>
-                        <Card.Title>Major Second Proficiency</Card.Title>
-                        <Card.Text>
-                        </Card.Text>
-                        <Button variant="primary">Train</Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={{ span: 3 }}>
-                    <Card style={{ width: '100%' }}>
-                      <Card.Img variant="top" src={medalicon} />
-                      <Card.Body>
-                        <Card.Title>Minor Third Proficiency</Card.Title>
-                        <Card.Text>
-                        </Card.Text>
-                        <Button variant="primary">Train</Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
-                  <Col md={{ span: 3 }}>
-                    <Card style={{ width: '100%' }}>
-                      <Card.Img variant="top" src={medalicon} />
-                      <Card.Body>
-                        <Card.Title>Major Third Proficiency</Card.Title>
-                        <Card.Text>
-                        </Card.Text>
-                        <Button variant="primary">Train</Button>
-                      </Card.Body>
-                    </Card>
-                  </Col>
+              <Col md={{ span: 12 }} className="badge-carousel">
+                {/* <Row>
+                  <h3>Unlocked Badges</h3>
                 </Row>
-              </Col>
-              <Col md={{ span: 4 }}>
-                <Image src="https://images.unsplash.com/photo-1516280440614-37939bbacd81?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=crop&w=2550&q=80" className="micImg" fluid />
+                <Row>
+                  {Object.entries(this.props.badges).filter(badge => badge[1] === "unlocked").map(badge => {
+                    return (
+                      <Card style={{ width: '25%' }} className="border rounded border-dark">
+                        <Card.Img variant="top" src={medalicon} />
+                        <Card.Body>
+                          <Card.Title>{badgeNames[badge[0]]}</Card.Title>
+                          <Button variant="primary">Train</Button>
+                        </Card.Body>
+                      </Card>
+                    )
+                  })}
+                </Row> */}
+                <Carousel>
+                  <Carousel.Item className="badge-carousel-item" style={{ textAlign: "center" }}>
+                    <Carousel.Caption>Unlocked Badges</Carousel.Caption>
+                    <Row>
+                      <Col md={{ span: 8, offset: 2 }}>
+                        <Row>
+                          {Object.entries(this.props.badges).filter(badge => badge[1] === "unlocked").map(badge => {
+                            return (
+                              <Card style={{ width: '12%' }} className="border rounded border-dark badge-card mx-auto">
+                                <Card.Img variant="top" src={medalicon} className="badge-img" />
+                                <Card.Body className="badge-card-body" style={{ padding: "5px" }}>
+                                  <Card.Title className="font-weight-bold">{badgeNames[badge[0]]}</Card.Title>
+                                  <Link to={`/exercises/intervals/${badgeIntervals[badge[0]]}`}><Button variant="primary">Train</Button></Link>
+                                </Card.Body>
+                              </Card>
+                            )
+                          })}
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Carousel.Item>
+                  <Carousel.Item className="badge-carousel-item" style={{ textAlign: "center" }}>
+                    <Carousel.Caption>Locked Badges</Carousel.Caption>
+                    <Row>
+                      <Col md={{ span: 8, offset: 2 }}>
+                        <Row>
+                          {Object.entries(this.props.badges).filter(badge => badge[1] === "locked").map(badge => {
+                            return (
+                              <Card style={{ width: '12%' }} className="border rounded border-dark badge-card mx-auto">
+                                <Card.Img variant="top" src={medalicon} className="badge-img" />
+                                <Card.Body className="badge-card-body" style={{ padding: "5px", fontSize: "12px" }}>
+                                  <Card.Title className="font-weight-bold">{badgeNames[badge[0]]}</Card.Title>
+                                </Card.Body>
+                              </Card>
+                            )
+                          })}
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Carousel.Item>
+                  <Carousel.Item className="badge-carousel-item" style={{ textAlign: "center" }}>
+                    <Carousel.Caption>Completed Badges</Carousel.Caption>
+                    <Row>
+                      <Col md={{ span: 8, offset: 2 }}>
+                        <Row>
+                          {Object.entries(this.props.badges).filter(badge => badge[1] === "completed").map(badge => {
+                            return (
+                              <Card style={{ width: '12%' }} className="border rounded border-dark badge-card mx-auto">
+                                <Card.Img variant="top" src={medalicon} className="badge-img" />
+                                <Card.Body className="badge-card-body" style={{ padding: "5px" }}>
+                                  <Card.Title className="font-weight-bold">{badgeNames[badge[0]]}</Card.Title>
+                                </Card.Body>
+                              </Card>
+                            )
+                          })}
+                        </Row>
+                      </Col>
+                    </Row>
+                  </Carousel.Item>
+                </Carousel>
               </Col>
             </Row>
             <Row>
@@ -385,7 +443,7 @@ class Goals extends React.Component {
             </Row>
             <Row>
               <Col md={{ span: 12 }} className="interval-accuracy-data border rounded border-dark">
-                <Bar data={this.buildIntervalGoalData()} options={intervalAccuracyOptions} width={1000} height={400}/>
+                <Bar data={this.buildIntervalGoalData()} options={intervalAccuracyOptions} width={1000} height={400} />
               </Col>
             </Row>
           </Col>
@@ -401,7 +459,7 @@ class Goals extends React.Component {
 
 function mapDispatchToProps(dispatch) {
   return bindActionCreators(
-    { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser },
+    { getIntervalAcc, getNoteAcc, getPitchAcc, setUser, getUser, getBadges, setBadge },
     dispatch
   );
 }
@@ -415,7 +473,8 @@ function mapStateToProps(state) {
     user_id: state.user.user_id,
     intervalAcc: state.intervalAcc,
     noteAcc: state.noteAcc,
-    pitchAcc: state.pitchAcc
+    pitchAcc: state.pitchAcc,
+    badges: state.badges
   };
 }
 
