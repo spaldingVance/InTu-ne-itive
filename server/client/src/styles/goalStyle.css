@@ -5,10 +5,12 @@
 .note-goal-data {
   /* border: solid black 5px;
   border-radius: 10px; */
+  text-align: center;
   padding: 5%;
 }
 
 .pitch-goal-data {
+  text-align: center;
   /* border: solid black 5px;
   border-radius: 10px; */
   padding: 5%;
@@ -24,18 +26,22 @@
 
 .badge-carousel {
   text-align: center;
-  margin-top: 5%;
+  margin-top: 3%;
 }
 
 .welcome-back {
   text-align: center;
-  margin-top: 2%;
+  margin-top: 1%;
 }
 
 .card-title.h5 {
   font-size: 14px;
 }
 
+.train-level {
+  text-align: center;
+  padding-top: 5%;
+}
 
 
 

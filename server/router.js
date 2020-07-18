@@ -130,6 +130,18 @@ module.exports = function (router) {
       response.send({response: reply});
     })
   })
+
+  router.post("/api/user/:userId/levelup/:targetLevel", (request, response, next) => {
+    let userId = request.params.userId;
+    let targetLevel = request.params.targetLevel;
+    let redisPath = `${userId}:level`;
+    request.redis.set(redisPath, targetLevel, function(err, level) {
+      request.redis.del(`${userId}:pitchAcc`, `${userId}:noteAcc`, function(err, reply) {
+        response.send({level: level})
+      });
+    });
+    
+  })
 }
 
 function findMaxInterval(level) {

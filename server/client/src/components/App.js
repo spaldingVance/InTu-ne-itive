@@ -68,12 +68,7 @@ class App extends React.Component {
           <Navbar bg="dark" variant="dark">
             <Navbar.Brand href="#home">EnTune</Navbar.Brand>
             <Nav className="mr-auto">
-              <Nav.Link href="#">Home</Nav.Link>
-              <Nav.Link href="#">Goals</Nav.Link>
-              <Nav.Link href="#">Sight Reading</Nav.Link>
-              <Nav.Link href="#">Pitch Matching</Nav.Link>
-              <Nav.Link href="#">Interval Training</Nav.Link>
-              <Nav.Link href="#">Login</Nav.Link>
+              <Nav.Link href="/">Home</Nav.Link>
             </Nav>
             <Navbar.Collapse className="justify-content-end">
               <Navbar.Text>

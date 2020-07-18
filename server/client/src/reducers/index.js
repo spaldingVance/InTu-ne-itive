@@ -21,7 +21,8 @@ const rootReducer = combineReducers({
   noteAcc: getNoteAccReducer,
   pitchAcc: getPitchAccReducer,
   badges: getBadgesReducer,
-  setBadge: setBadgeReducer
+  setBadge: setBadgeReducer,
+  level: levelReducer
 })
 
 export default rootReducer;

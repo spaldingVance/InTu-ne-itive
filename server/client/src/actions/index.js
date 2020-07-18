@@ -12,6 +12,21 @@ export const GET_NOTE_ACC = "GET_NOTE_ACC";
 export const GET_BADGES = "GET_BADGES";
 export const SET_BADGE = "SET_BADGE";
 export const GET_INTERVAL_EXERCISE = "GET_INTERVAL_EXERCISE"
+export const LEVEL_UP = "LEVEL_UP";
+
+
+export function levelUp(user_id, currentLevel) {
+  const url = `http://localhost:5000/api/user/${user_id}/levelup/${currentLevel + 1}`
+  const request = axios({
+    method: 'post',
+    url: url
+  })
+
+  return {
+    type: LEVEL_UP,
+    payload: request
+  }
+}
 
 export function getExercise(level) {
   const url = `http://localhost:5000/api/exercise/${level}`;
