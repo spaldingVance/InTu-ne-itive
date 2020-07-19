@@ -10,16 +10,8 @@ var audioContext = null;
 var isPlaying = false;
 var sourceNode = null;
 var analyser = null;
-var theBuffer = null;
-var DEBUGCANVAS = null;
 var mediaStreamSource = null;
-var detectorElem,
-  canvasElem,
-  waveCanvas,
-  pitchElem,
-  noteElem,
-  detuneElem,
-  detuneAmount;
+
 
 var pitchArr = [];
 
@@ -294,11 +286,10 @@ class PitchDetector extends React.Component {
   render() {
     return (
       <div>
-        <h1>audioFilters {this.state.audioFilters}</h1>
-        <h1>starting note {this.state.startingNote}</h1>
         <Button onClick={this.startLiveInput}>Start Live Input</Button>
         <Button onClick={this.getTimeWindowPitches}>Click to Get Results</Button>
         <Button onClick={toggleOscillator}>Play Starting Note</Button>
+        <h1>starting note C{this.state.startingNote / 12 - 1}</h1>
         <Button onClick={this.matchOctave}>Match Octave</Button>
       </div>
     )

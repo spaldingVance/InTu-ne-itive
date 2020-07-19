@@ -5,3 +5,7 @@
   margin-right:auto;
   margin-left:auto
 }
+
+html, body {
+  background-color: rgb(141, 141, 141);
+}
