@@ -464,7 +464,7 @@ class Goals extends React.Component {
                 <ul>
                   <li>Receive an Average Note Accuracy Score of at Least 90% on Your Last 10 Exercises</li>
                   <li>Receive an Average Pitch Accuracy Score of at Least 70% on Your Last 10 Exercises</li>
-                  <li>Complete All Unlocked Badges: Badges Need an Interval Accuracy of at Least 70% after at least 3 exercises </li>
+                  <li>Complete All Unlocked Badges: Badges Need an Interval Accuracy of at Least 70% after at least 3 Exercises </li>
                 </ul>
                 <br />
                 <div style={{ textAlign: "center" }}>
