@@ -161,6 +161,21 @@ class IntervalScore extends React.Component {
                       <Button className="exercise-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
                     </Col>
                   </Row>
+                  <Row>
+                    <br />
+                    <Col md={{ span: 4, offset: 5 }} >
+                      <Row className="results-legend">
+                        <h4>Results Legend</h4>
+                      </Row>
+                      <Row className="results-legend">
+                        <ul>
+                          <li style={{ color: "red" }}>Sharp</li>
+                          <li style={{ color: "darkblue" }}>Flat</li>
+                          <li style={{ color: "darkgreen" }}>On Pitch</li>
+                        </ul>
+                      </Row>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
             </Col>

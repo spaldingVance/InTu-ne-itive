@@ -31,3 +31,8 @@
 .pitch-detector-div {
   margin-left: 10%;
 }
+
+.results-legend {
+  text-align: center;
+  margin: 0 auto;
+}

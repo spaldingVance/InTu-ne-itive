@@ -108,9 +108,9 @@ class Score extends React.Component {
           <Row>
             <Col md={{ span: 2 }} >
               <PitchDetector intervalEx={false} />
-              <br/>
+              <br />
               <h5>To Get Started: </h5>
-              <ul style={{textAlign: "left"}}>
+              <ul style={{ textAlign: "left" }}>
                 <li>Play the starting pitch</li>
                 <li>If you would like to use a different octave, press "Match Octave" and sing/whistle the starting note back in the octave of your choice</li>
                 <li>Press "Start Live Input" and then "Start Exercise" when you're ready to begin</li>
@@ -141,6 +141,21 @@ class Score extends React.Component {
                     </Col>
                     <Col md={{ span: 6 }}>
                       <Button className="exercise-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
+                    </Col>
+                  </Row>
+                  <Row>
+                    <br />
+                    <Col md={{ span: 4, offset: 5 }} >
+                      <Row className="results-legend">
+                        <h4>Results Legend</h4>
+                      </Row>
+                      <Row className="results-legend">
+                        <ul>
+                          <li style={{ color: "red" }}>Sharp</li>
+                          <li style={{ color: "darkblue" }}>Flat</li>
+                          <li style={{ color: "darkgreen" }}>On Pitch</li>
+                        </ul>
+                      </Row>
                     </Col>
                   </Row>
                 </Col>
