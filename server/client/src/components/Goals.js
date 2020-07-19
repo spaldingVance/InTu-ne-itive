@@ -125,11 +125,6 @@ let intervalAccuracyOptions = {
 
 var noteAccuracyData = [];
 
-
-
-
-var currentLevel = 2;
-
 class Goals extends React.Component {
   constructor(props) {
     super(props)
@@ -326,7 +321,7 @@ class Goals extends React.Component {
 
           negIntervalAcc = negIntervalAcc.slice(negIntervalAcc.length - 5);
           intervalAcc = intervalAcc.concat(negIntervalAcc)
-          if ((intervalAcc.reduce((acc, cur) => acc += cur) / 10) >= 60) {
+          if ((intervalAcc.reduce((acc, cur) => acc += cur) / 10) >= 70) {
             let badgeForInterval = Object.entries(badgeIntervals).find(badgeInterval => badgeInterval[1] === interval)[0];
             this.props.setBadge(this.props.user_id, badgeForInterval, "completed");
           }
@@ -467,9 +462,9 @@ class Goals extends React.Component {
                 <h4 style={{ textAlign: "center" }}>To Level Up:</h4>
                 <br />
                 <ul>
-                  <li>Receive an Average Note Accuracy Score of at least 90% On You Last 10 Exercises</li>
-                  <li>Receive an Average Pitch Accuracy Score of at least 70% On You Last 10 Exercises</li>
-                  <li>Complete All Unlocked Badges</li>
+                  <li>Receive an Average Note Accuracy Score of at Least 90% on Your Last 10 Exercises</li>
+                  <li>Receive an Average Pitch Accuracy Score of at Least 70% on Your Last 10 Exercises</li>
+                  <li>Complete All Unlocked Badges: Badges Need an Interval Accuracy of at Least 70% after at least 3 exercises </li>
                 </ul>
                 <br />
                 <div style={{ textAlign: "center" }}>
