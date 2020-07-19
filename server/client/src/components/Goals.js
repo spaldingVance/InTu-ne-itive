@@ -449,22 +449,32 @@ class Goals extends React.Component {
                   <br />
                   <Line data={this.buildNoteGoalData()} options={noteGoalOptions} height={300} />
                   <br />
-                  <Button onClick={() => this.setState({ showNoteAccGraph: false })}>View Progress Over Time</Button>
+                  <Button className="dash-button-bottom" onClick={() => this.setState({ showNoteAccGraph: false })}>View Completion Percentage</Button>
                 </Col> :
                 <Col md={{ span: 4 }} className="note-goal-data border rounded border-dark">
                   <h4>Note Accuracy</h4>
+                  <br />
                   <h6>Number of Exercises: {this.props.noteAcc.length}</h6>
                   <h6>10 Needed to Level Up</h6>
                   <br />
                   {this.state.noteAccGoalReached ? <Image src={check}></Image> : ""}
                   <ProgressBar now={Math.floor(this.props.noteAcc[this.props.noteAcc.length - 1] / 90 * 100)} label={Math.floor(this.props.noteAcc[this.props.noteAcc.length - 1] / 90 * 100) ? `${Math.floor(this.props.noteAcc[this.props.noteAcc.length - 1] / 90 * 100)}%` : ""} />
                   <br />
-                  <Button onClick={() => this.setState({ showNoteAccGraph: true })}>View Completion Percentage</Button>
+                  <br />
+                  <Button className="dash-button-bottom" onClick={() => this.setState({ showNoteAccGraph: true })}>View Progress Over Time</Button>
                 </Col>
               }
               <Col md={{ span: 4 }} className="border rounded border-dark train-level">
-                <h2>Level: {this.props.level}</h2>
-                <Link to={`/exercises/level/${this.props.level}`}><Button variant="primary">Train</Button></Link>
+                <h4 style={{textAlign: "center"}}>To Level Up:</h4>
+                <br />
+                <ul>
+                  <li>Receive an Average Note Accuracy Score of at least 90% On You Last 10 Exercises</li>
+                  <li>Receive an Average Pitch Accuracy Score of at least 70% On You Last 10 Exercises</li>
+                  <li>Complete All Unlocked Badges</li>
+                </ul>
+                <div style={{textAlign: "center"}}>
+                <Link to={`/exercises/level/${this.props.level}`} ><Button className="dash-button-bottom" >Train Level {this.props.level}</Button></Link>
+                </div>
               </Col>
 
 
@@ -475,17 +485,19 @@ class Goals extends React.Component {
                   <br />
                   <Line data={this.buildPitchGoalData()} options={pitchGoalOptions} height={300} />
                   <br />
-                  <Button onClick={() => this.setState({ showPitchAccGraph: false })}>View Progress Over Time</Button>
+                  <Button className="dash-button-bottom" onClick={() => this.setState({ showPitchAccGraph: false })}>View Completion Percentage</Button>
                 </Col> :
                 <Col md={{ span: 4 }} className="pitch-goal-data border rounded border-dark">
                   <h4>Pitch Accuracy</h4>
+                  <br />
                   <h6>Number of Exercises: {this.props.pitchAcc.length}</h6>
                   <h6>10 Needed to Level Up</h6>
                   <br />
                   {this.state.pitchAccGoalReached ? <Image src={check}></Image> : ""}
                   <ProgressBar now={Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 70 * 100)} label={Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 70 * 100) ? `${Math.floor(this.props.pitchAcc[this.props.pitchAcc.length - 1] / 70 * 100)}%` : ""} />
                   <br />
-                  <Button onClick={() => this.setState({ showPitchAccGraph: true })}>View Completion Percentage</Button>
+                  <br />
+                  <Button className="dash-button-bottom" onClick={() => this.setState({ showPitchAccGraph: true })}>View Progress Over Time</Button>
                 </Col>
               }
             </Row>

@@ -2,6 +2,8 @@ import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setIntervalAcc, setNoteAcc, setPitchAcc } from '../actions/index'
+import { Row, Container, Col, Image, ProgressBar, Button, Card, Carousel } from 'react-bootstrap';
+
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
 var audioContext = null;
@@ -26,22 +28,104 @@ var isPlaying = false;
 var stop = false;
 var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
+var updatePitchInterval;
+
+let findOctavePitches = [];
+
+
 class PitchDetector extends React.Component {
   constructor(props) {
     super(props)
-    console.log("pitch detector props: ");
-    console.log(this.props)
-
+    this.state = {
+      startingNote: 60,
+      audioFilters: "false"
+    }
+    this.startLiveInput = this.startLiveInput.bind(this);
+    this.matchOctave = this.matchOctave.bind(this);
+    this.setOctave = this.setOctave.bind(this);
     this.getTimeWindowPitches = this.getTimeWindowPitches.bind(this);
   }
 
-  getTimeWindowPitches() {
+  matchOctave() {
+    findOctavePitches = [];
+    
+    audioContext = new AudioContext();
+    stop = true;
+    if (isPlaying) {
+      //stop playing and return
+      sourceNode.stop(0);
+      sourceNode = null;
+      analyser = null;
+      isPlaying = false;
+    }
+    getUserMedia(
+      {
+        "audio": {
+          "mandatory": {
+            "googEchoCancellation": "false",
+            "googAutoGainControl": "false",
+            "googNoiseSuppression": "false",
+            "googHighpassFilter": "false"
+          },
+          "optional": []
+        },
+      }, gotStream);
+      console.log("starting interval")
+      var myInterval = setInterval(updateOctavePitches, 5);
+      setTimeout(() => clearTimeout(myInterval), 3000);
+      setTimeout(() => this.setOctave(), 3000);
+  }
 
-    let midiNotes = this.props.midi.map(midi => midi + 84);
-    midiNotes.unshift(84);
+  startLiveInput() {
+    audioContext = new AudioContext();
+    stop = true;
+    if (isPlaying) {
+      //stop playing and return
+      sourceNode.stop(0);
+      sourceNode = null;
+      analyser = null;
+      isPlaying = false;
+    }
+    getUserMedia(
+      {
+        "audio": {
+          "mandatory": {
+            "googEchoCancellation": "false",
+            "googAutoGainControl": this.state.audioFilters,
+            "googNoiseSuppression": this.state.audioFilters,
+            "googHighpassFilter": this.state.audioFilters
+          },
+          "optional": []
+        },
+      }, gotStream);
+      updatePitchInterval= setInterval(updatePitch, 5);
+  }
+  
+  setOctave() {
+    let avg = findOctavePitches.reduce((acc, cur) => acc += cur) / findOctavePitches.length;
+    console.log("AVERAGE");
+    console.log(avg);
+    let note = noteFromPitch(avg);
+    console.log("NOTE");
+    console.log(note);
+    console.log(Math.round(note / 12));
+    let startingNote = Math.round(note / 12) * 12;
+    this.setState({startingNote: startingNote})
+    if (startingNote / 12 <= 5) {
+      this.setState({audioFilters: "true"})
+    } else {
+      this.setState({audioFilters: "false"})
+    }
+  }
+
+  getTimeWindowPitches() {
+    clearTimeout(updatePitchInterval);
+
+    let midiNotes = this.props.midi.map(midi => midi + this.state.startingNote);
+    midiNotes.unshift(this.state.startingNote);
     console.log("MIDI NOTES");
     console.log(midiNotes);
-
+    console.log(pitchArr);
     let myWindow = this.props.timeStamps;
     console.log(myWindow);
     let window1 = pitchArr.filter(pitch => pitch.time > myWindow[0] && pitch.time < myWindow[1]);
@@ -63,14 +147,14 @@ class PitchDetector extends React.Component {
     console.log(window8);
 
 
-    window1 = window1.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[0] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[0] + 6)))
-    window2 = window2.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[1] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[1] + 6)))
-    window3 = window3.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[2] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[2] + 6)))
-    window4 = window4.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[3] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[3] + 6)))
-    window5 = window5.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[4] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[4] + 6)))
-    window6 = window6.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[5] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[5] + 6)))
-    window7 = window7.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[6] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[6] + 6)))
-    window8 = window8.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[7] - 6)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[7] + 6)))
+    window1 = window1.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[0] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[0] + 4)))
+    window2 = window2.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[1] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[1] + 4)))
+    window3 = window3.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[2] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[2] + 4)))
+    window4 = window4.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[3] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[3] + 4)))
+    window5 = window5.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[4] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[4] + 4)))
+    window6 = window6.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[5] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[5] + 4)))
+    window7 = window7.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[6] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[6] + 4)))
+    window8 = window8.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[7] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[7] + 4)))
 
     console.log("C SHOULD BE: " + frequencyFromNoteNumber(midiNotes[0] - 6));
     let averages = [];
@@ -183,89 +267,48 @@ class PitchDetector extends React.Component {
     // console.log(intervalAccuracy);
   }
 
-  componentDidUpdate() {
-    let pitches = this.props.exercise.split(' ').slice(1).map(pitch => {
-      // if(pitch.length === 1) {
-      //   return pitch[0]
-      // } else if (pitch.length === 2 && (pitch[0] !== '^' || pitch[0] != '_')) {
-      //   return pitch[0];
-      // } else if (pitch.length === 2) {
-      //   return pitch[1];
-      // } else if (pitch.length === 3 && (pitch[0] !== '^' || pitch[0] != '_')) {
-      //   return pitch[0];
-      // } else if (pitch.length === 3) {
+  // componentDidUpdate() {
+  //   let pitches = this.props.exercise.split(' ').slice(1).map(pitch => {
+  //     // if(pitch.length === 1) {
+  //     //   return pitch[0]
+  //     // } else if (pitch.length === 2 && (pitch[0] !== '^' || pitch[0] != '_')) {
+  //     //   return pitch[0];
+  //     // } else if (pitch.length === 2) {
+  //     //   return pitch[1];
+  //     // } else if (pitch.length === 3 && (pitch[0] !== '^' || pitch[0] != '_')) {
+  //     //   return pitch[0];
+  //     // } else if (pitch.length === 3) {
 
-      // }
-      if (pitch[0] === '^') {
-        return pitch[1] + "#";
-      } else if (pitch[0] === '_') {
-        return pitch[1] + "b";
-      } else {
-        return pitch[0];
-      }
-    });
-    console.log(pitches);
+  //     // }
+  //     if (pitch[0] === '^') {
+  //       return pitch[1] + "#";
+  //     } else if (pitch[0] === '_') {
+  //       return pitch[1] + "b";
+  //     } else {
+  //       return pitch[0];
+  //     }
+  //   });
+  //   console.log(pitches);
 
-  }
+  // }
   render() {
     return (
       <div>
-        <h1>Pitch Detector</h1>
-        <button onClick={stopLiveInput}>start live input</button>
-        <button onClick={viewPitchArr}>View Pitch Arr</button>
-        <button onClick={this.getTimeWindowPitches}>Get Time Window Pitches</button>
-        <button onClick={toggleOscillator}>Play Starting Note</button>
+        <h1>audioFilters {this.state.audioFilters}</h1>
+        <h1>starting note {this.state.startingNote}</h1>
+        <Button onClick={this.startLiveInput}>Start Live Input</Button>
+        <Button onClick={this.getTimeWindowPitches}>Click to Get Results</Button>
+        <Button onClick={toggleOscillator}>Play Starting Note</Button>
+        <Button onClick={this.matchOctave}>Match Octave</Button>
       </div>
     )
   }
 }
 
-function toggleLiveInput() {
-  if (isPlaying) {
-    //stop playing and return
-    sourceNode.stop(0);
-    sourceNode = null;
-    analyser = null;
-    isPlaying = false;
-  }
-  getUserMedia(
-    {
-      "audio": {
-        "mandatory": {
-          "googEchoCancellation": "false",
-          "googAutoGainControl": "false",
-          "googNoiseSuppression": "false",
-          "googHighpassFilter": "false"
-        },
-        "optional": []
-      },
-    }, gotStream);
-}
 
-function stopLiveInput() {
-  audioContext = new AudioContext();
-  stop = true;
-  if (isPlaying) {
-    //stop playing and return
-    sourceNode.stop(0);
-    sourceNode = null;
-    analyser = null;
-    isPlaying = false;
-  }
-  getUserMedia(
-    {
-      "audio": {
-        "mandatory": {
-          "googEchoCancellation": "false",
-          "googAutoGainControl": "false",
-          "googNoiseSuppression": "false",
-          "googHighpassFilter": "false"
-        },
-        "optional": []
-      },
-    }, gotStream);
-  setTimeout(collectPitches, 2000)
-}
+
+
+
 
 function toggleOscillator() {
   let audioContext = new AudioContext();
@@ -445,6 +488,24 @@ function updatePitch(time) {
       let pitch = ac;
       if (pitch > MinPitch && pitch < MaxPitch) {
         pitchArr.push({ pitch: pitch, time: performance.now() });
+      }
+      var note = noteFromPitch(pitch);
+      // findNextPitch(noteStrings[note % 12]);
+      var detune = centsOffFromPitch(pitch, note);
+    }
+  }
+}
+
+function updateOctavePitches() {
+  if (analyser) {
+    analyser.getFloatTimeDomainData(buf);
+    var ac = autoCorrelate(buf, audioContext.sampleRate);
+    if (ac == -1) {
+
+    } else {
+      let pitch = ac;
+      if (pitch > MinPitch && pitch < MaxPitch) {
+        findOctavePitches.push(pitch);
       }
       var note = noteFromPitch(pitch);
       // findNextPitch(noteStrings[note % 12]);

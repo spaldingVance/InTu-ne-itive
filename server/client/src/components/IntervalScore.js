@@ -93,7 +93,7 @@ class IntervalScore extends React.Component {
     if (this.props.exercise) {
       console.log(this.props.exercise);
       return (
-        <Container fluid>
+        <div>
           <h1>Interval Score</h1>
           <Row>
             <Col md={{ span: 8, offset: 2 }}>
@@ -112,7 +112,7 @@ class IntervalScore extends React.Component {
               <PitchDetector intervalEx={true}/>
             </Col>
           </Row>
-        </Container>
+        </div>
 
 
       )

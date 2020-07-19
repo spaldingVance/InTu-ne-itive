@@ -66,7 +66,7 @@ class App extends React.Component {
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="#home">EnTune</Navbar.Brand>
+            <Navbar.Brand href="#home">InTunitive</Navbar.Brand>
             <Nav className="mr-auto">
               <Nav.Link href="/">Home</Nav.Link>
             </Nav>
@@ -90,7 +90,7 @@ class App extends React.Component {
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="#home">EnTune</Navbar.Brand>
+            <Navbar.Brand href="#home">InTunitive</Navbar.Brand>
             <Nav className="mr-auto">
               <Nav.Link href="#">Home</Nav.Link>
               <Nav.Link href="#">Goals</Nav.Link>

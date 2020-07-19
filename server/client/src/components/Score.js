@@ -10,7 +10,6 @@ import PitchDetector from './PitchDetector';
 import { getExercise, setTimeStamps } from "../actions/index"
 import { Row, Container, Col } from 'react-bootstrap';
 
-const notation = 'C D E F  | G A B c|';
 const engraverParams = { add_classes: true }
 
 let timeStamps = [];
@@ -90,18 +89,19 @@ class Score extends React.Component {
     if (this.props.exercise) {
       console.log(this.props.exercise);
       return (
-        <Container fluid>
-          <h1>Exercise Score</h1>
+        <div style={{textAlign: "center"}}>
+            <h1>Exercise: Level {this.state.level}</h1>
           <Row>
             <Col md={{ span: 8, offset: 2 }}>
-              <Notation notation={this.props.exercise} engraverParams={engraverParams} />
+            <Button onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
+              <Notation notation={this.props.exercise} engraverParams={engraverParams}/>
             </Col>
           </Row>
           <Row>
             <Col md={{ span: 8, offset: 2 }}>
               <Player startVisualPlaying={this.startVisualPlaying} />
-              <Button onClick={this.startVisualPlaying}>Start</Button>
-              <Button onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
+              <Button onClick={this.startVisualPlaying}>Start Exercise</Button>
+              
             </Col>
           </Row>
           <Row>
@@ -109,7 +109,7 @@ class Score extends React.Component {
               <PitchDetector intervalEx={false}/>
             </Col>
           </Row>
-        </Container>
+        </div>
 
 
       )
