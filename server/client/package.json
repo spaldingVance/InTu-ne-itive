@@ -10,6 +10,7 @@
     "body-parser": "^1.19.0",
     "bootstrap": "^4.5.0",
     "chart.js": "^2.9.3",
+    "lodash": "^4.17.19",
     "react": "^16.13.1",
     "react-abc": "^0.4.0",
     "react-bootstrap": "^1.2.2",

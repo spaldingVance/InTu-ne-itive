@@ -6,27 +6,14 @@ module.exports = function (router) {
   router.get("/api/exercise/:level", (request, response, next) => {
     let level = Number(request.params.level);
     let returnObj = generateNaturalMidi(level);
-    // let maxInterval = findMaxInterval(level);
-    // let midiIntervals = generateMidi(maxInterval);
-    // let cumulative = getCumulativeIntervals(midiIntervals)
-    // let abcData = translateIntervalsToAbc(cumulative);
-    // const noteLength = "[L:1/4] "
-    // console.log("cmulative for level exercise");
-    // console.log(cumulative)
-    // response.send({ abc: (noteLength + abcData), midi: cumulative });
     response.send(returnObj);
   })
 
   router.get("/api/intervals/:interval", (request, response, next) => {
     let interval = Number(request.params.interval);
-    console.log("exercise interval ---")
-    console.log(interval);
     let midiIntervals = generateIntervalExercise(interval);
-    console.log(midiIntervals);
     let cumulative = getCumulativeIntervals(midiIntervals);
-    console.log(cumulative);
     let abcData = translateIntervalsToAbc(cumulative);
-    console.log(abcData);
     const noteLength = "[L:1/4] "
     response.send({ abc: (noteLength + abcData), midi: cumulative });
   })
@@ -34,7 +21,6 @@ module.exports = function (router) {
   router.post("/api/user/:userId", (request, response, next) => {
     let userId = request.params.userId;
     let name = request.body.name;
-    console.log("NAME: " + name + " id: " + userId);
     request.redis.set(userId, name, redis.print);
     request.redis.set(`${userId}:level`, 1, redis.print);
     request.redis.hset(`${userId}:badges`, "badge1", "unlocked", "badge2", "unlocked", "badge3", "locked");
@@ -46,7 +32,6 @@ module.exports = function (router) {
 
   router.get("/api/user/:userId", (request, response, next) => {
     let userId = request.params.userId;
-    console.log(userId);
     request.redis.get(userId, function (err, name) {
       request.redis.get(`${userId}:level`, function (err, level) {
         response.send({ name: name, user_id: userId, level: level });
@@ -61,10 +46,6 @@ module.exports = function (router) {
     let acc = request.body.acc;
     let userId = request.params.userId
     let redisPath = `${userId}:${interval}`
-    console.log("interval: " + interval);
-    console.log("acc: " + acc);
-    console.log(request.body)
-    console.log("redis path: " + redisPath);
     request.redis.lpush(redisPath, acc, function (err, reply) {
       response.send({ length: reply });
     });
@@ -96,7 +77,7 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:${interval}`
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
-      response.send({ interval: interval, acc: reply })
+      response.send({ interval: interval, acc: reply.reverse() })
     })
   })
 
@@ -104,7 +85,7 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:noteAcc`;
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
-      response.send(reply)
+      response.send(reply.reverse())
     })
   })
 
@@ -112,7 +93,7 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:pitchAcc`;
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
-      response.send(reply)
+      response.send(reply.reverse())
     })
   })
 
@@ -120,7 +101,6 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:badges`;
     request.redis.hgetall(redisPath, function (err, reply) {
-      let badges = {};
       response.send(reply);
     })
   })
@@ -140,7 +120,7 @@ module.exports = function (router) {
     let targetLevel = Number(request.params.targetLevel);
     let preReqs = findPrereqs(targetLevel);
     preReqs.forEach(preReq => {
-      request.redis.set(`${userId}:${preReq}`, "unlocked")
+      request.redis.hset(`${userId}:badges`, preReq, "unlocked")
     })
     let redisPath = `${userId}:level`;
     request.redis.set(redisPath, targetLevel, function (err, level) {
@@ -150,45 +130,6 @@ module.exports = function (router) {
     });
 
   })
-}
-
-function findMaxInterval(level) {
-  let maxInterval = 0;
-  switch (level) {
-    case 1:
-      //prereqs: interval1, interval2
-      maxInterval = 2;
-      break;
-    case 2:
-      // interval3, interval4
-      maxInterval = 4;
-      break;
-    case 3:
-      // interval5
-      maxInterval = 5;
-      break;
-    case 4:
-      //interval 6
-      maxInterval = 6;
-      break;
-    case 5:
-      //interval 7
-      maxInterval = 7;
-      break;
-    case 6:
-      //interval8 interval9
-      maxInterval = 9;
-      break;
-    case 7:
-      //interval10 interval11
-      maxInterval = 11;
-      break;
-    case 8:
-      //interval 12
-      maxInterval = 12;
-      break;
-  }
-  return maxInterval;
 }
 
 function findPrereqs(level) {
@@ -222,20 +163,6 @@ function findPrereqs(level) {
   }
 }
 
-function generateMidi(maxInterval) {
-  let midiIntervals = [];
-  for (let i = 0; i < 7; i++) {
-    let note = Math.ceil((Math.random() * (maxInterval)));
-    if (Math.round(Math.random())) {
-      midiIntervals.push(note);
-    } else {
-      midiIntervals.push(0 - note)
-    }
-  }
-  console.log(midiIntervals);
-  return midiIntervals;
-}
-
 function getCumulativeIntervals(midiIntervals) {
   let cumulative = 0;
   let cumulativeIntervals = midiIntervals.map(interval => {
@@ -245,8 +172,6 @@ function getCumulativeIntervals(midiIntervals) {
       return cumulative += interval
     }
   })
-  console.log('cumulative');
-  console.log(cumulativeIntervals);
   return cumulativeIntervals;
 
 }
@@ -267,10 +192,6 @@ function translateIntervalsToAbc(cumulativeIntervals) {
     return noteLetter;
   })
   abcData.unshift('=C');
-  console.log(abcData.join(" "));
-  // removing accidentals
-  abcData = abcData.map(note => note.slice(1))
-  // translateAbcToMidi(abcData);
   let notationString = abcData.join(" ");
   return notationString;
 }
@@ -286,39 +207,6 @@ function generateIntervalExercise(interval) {
   }
   return midiIntervals;
 }
-
-// function translateAbcToMidi(abcData) {
-//   let abcStrings = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
-//   let abcObjUp = {
-//     'C': 0,
-//     'D': 1,
-//     'E': 2,
-//     'F': 2,
-//     'G': 3,
-//     'A': 4,
-//     'B': 5
-//   }
-//   let abcObjDown = {
-//     'C': 0,
-//     'B': 0,
-//     'A': 1,
-//     'G': 2,
-//     'F': 3,
-//     'E': 3,
-//     'D': 4
-
-//   }
-//   let midiNotes = abcData.map(note => {
-//     let index = abcStrings.findIndex(string => string === note[0]);
-//     if(note[1] === ",") {
-//       return 60 - abcObjDown[note[0]]
-//     } else {
-//       return 60 + abcObjUp[note[0]];
-//     }
-//   })
-//   console.log("easy midi below")
-//   console.log(midiNotes);
-// }
 
 function generateNaturalMidi(maxInterval) {
   let abcToMidiObj = {
@@ -357,23 +245,12 @@ function generateNaturalMidi(maxInterval) {
 
 
   }
-  let abcStrings = ['C', 'D', 'E', 'F', 'G', 'A', 'B'];
   let abcData = [];
   let cumulativeNotes = [];
   let cumulative = 0;
   for (let i = 0; i < 7; i++) {
     let interval = Math.ceil((Math.random() * (maxInterval)));
-    console.log("interval: " + interval)
     let up = Math.round(Math.random());
-    // if (up) {
-    //   cumulative += interval;
-    //   console.log("up index: " + (cumulative % 8));
-    //   abcData.push(abcStrings[cumulative % 8 ])
-    // } else {
-    //   cumulative -= interval;
-    //   abcData.push(abcStrings[(abcStrings.length - cumulative) % 8 - 1 ])
-    //   console.log("down index: " + ((abcStrings.length - cumulative) % 8 - 1 ))
-    // }
 
     if ((cumulative - interval) < -7) {
       cumulative += interval;
@@ -384,15 +261,7 @@ function generateNaturalMidi(maxInterval) {
     } else {
       cumulative -= interval;
     }
-    console.log("cumulative: " + cumulative)
     cumulativeNotes.push(cumulative)
-    // if (cumulative > 0) {
-    //   console.log("up index: " + (cumulative % 8));
-    //   abcData.push(abcStrings[cumulative % 8])
-    // } else {
-    //   abcData.push(abcStrings[(abcStrings.length - cumulative) % 8 - 1])
-    //   console.log("down index: " + ((abcStrings.length - cumulative) % 8 - 1))
-    // }
     abcData.push(abcObj[String(cumulative)])
   }
   abcData = abcData.map((note, index) => {
@@ -403,14 +272,11 @@ function generateNaturalMidi(maxInterval) {
     }
   })
   abcData.unshift("C")
-  console.log("NATURAL MIDI BELOW _______")
-  console.log(abcData);
-  console.log(cumulativeNotes)
   let midiFromCumulative = cumulativeNotes.map(note => {
     return abcToMidiObj[String(note)];
   })
   console.log(midiFromCumulative);
   const noteLength = "[L:1/4] "
-  return {abc: (noteLength + abcData.join(" ")), midi: midiFromCumulative}
+  return { abc: (noteLength + abcData.join(" ")), midi: midiFromCumulative }
 
 }

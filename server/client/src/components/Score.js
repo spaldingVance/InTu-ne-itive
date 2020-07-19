@@ -8,11 +8,14 @@ import Player from './Player';
 import PitchDetector from './PitchDetector';
 
 import { getExercise, setTimeStamps } from "../actions/index"
-import { Row, Container, Col } from 'react-bootstrap';
+import { Row, Col } from 'react-bootstrap';
+import "../styles/scoreStyle.css";
 
-const engraverParams = { add_classes: true }
+const engraverParams = { add_classes: true, responsive: "resize", staffwidth: "300" }
 
 let timeStamps = [];
+
+let isPlaying = false;
 
 class Score extends React.Component {
   constructor(props) {
@@ -26,13 +29,34 @@ class Score extends React.Component {
     this.loadExercise = this.loadExercise.bind(this);
     this.startVisualPlaying = this.startVisualPlaying.bind(this);
   }
+
   startVisualPlaying(collectPitches = false) {
+    if (isPlaying) {
+      isPlaying = false;
+      for (let i = 0; i < 4; i++) {
+        let notes = document.getElementsByClassName("abcjs-n" + i);
+        notes[0].style.fill = "black";
+        notes[1].style.fill = "black";
+      }
+      return null;
+
+
+    }
+    isPlaying = true;
     if (collectPitches) timeStamps = [];
-    console.log("Collect pitches is: " + collectPitches)
-    console.log("STARTED");
     var i = 0;
     let timedInterval;
     (function change() {
+      if (!isPlaying) {
+        isPlaying = false;
+        for (let i = 0; i < 4; i++) {
+          let notes = document.getElementsByClassName("abcjs-n" + i);
+          notes[0].style.fill = "black";
+          notes[1].style.fill = "black";
+          clearInterval(timedInterval);
+          return null;
+        }
+      }
 
       let measureIndex = 0;
       let noteIndex = i;
@@ -46,17 +70,12 @@ class Score extends React.Component {
       if (noteIndex === 3 && measureIndex > 0) {
         measureIndex -= 1;
       }
-      console.log("noteIndex " + noteIndex)
-      console.log("measureIndex " + measureIndex)
       if (i === 8) {
-        // setTimeout(() => document.getElementsByClassName("abcjs-p" + (i-1))[0].style.fill = "black", 1000)
         document.getElementsByClassName("abcjs-n3")[1].style.fill = "black";
         clearInterval(timedInterval);
+        isPlaying = false;
         return null;
       } else {
-        console.log(i);
-
-        console.log("abcjs-n" + noteIndex);
         document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "red";
 
         if (noteIndex > 0) {
@@ -72,14 +91,11 @@ class Score extends React.Component {
       clearInterval(timedInterval);
       timedInterval = setInterval(change, 1000);
     })();
-    console.log("TIMESTAMPS_________")
-    console.log(timeStamps);
     if (collectPitches) this.props.setTimeStamps(timeStamps);
   }
 
   loadExercise(level) {
     this.props.getExercise(level);
-    console.log(this.props.exercise);
   }
 
   componentDidMount() {
@@ -87,29 +103,51 @@ class Score extends React.Component {
   }
   render() {
     if (this.props.exercise) {
-      console.log(this.props.exercise);
       return (
-        <div style={{textAlign: "center"}}>
-            <h1>Exercise: Level {this.state.level}</h1>
+        <div style={{ textAlign: "center" }} className="score-div">
           <Row>
-            <Col md={{ span: 8, offset: 2 }}>
-            <Button onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
-              <Notation notation={this.props.exercise} engraverParams={engraverParams}/>
+            <Col md={{ span: 2 }} >
+              <PitchDetector intervalEx={false} />
+              <br/>
+              <h5>To Get Started: </h5>
+              <ul style={{textAlign: "left"}}>
+                <li>Play the starting pitch</li>
+                <li>If you would like to use a different octave, press "Match Octave" and sing/whistle the starting note back in the octave of your choice</li>
+                <li>Press "Start Live Input" and then "Start Exercise" when you're ready to begin</li>
+                <li>When you're done, press "Get Results"</li>
+                <li>If you would like to switch our the exercise for another one, press "Load New Exercise"</li>
+              </ul>
             </Col>
-          </Row>
-          <Row>
-            <Col md={{ span: 8, offset: 2 }}>
-              <Player startVisualPlaying={this.startVisualPlaying} />
-              <Button onClick={this.startVisualPlaying}>Start Exercise</Button>
-              
+            <Col md={{ span: 10 }}>
+
+
+              <Row style={{ textAlign: "center" }}>
+                <Col md={{ span: 12 }} className="title-container">
+                  <h1>Exercise: Level {this.state.level}</h1>
+                  <h4>All Intervals will be less than </h4>
+                </Col>
+              </Row>
+              <Row>
+                <Col md={{ span: 10, offset: 1 }} >
+                  <Notation notation={this.props.exercise} engraverParams={engraverParams} className="notation-container" />
+                </Col>
+              </Row>
+              <Row>
+                <Col md={{ span: 10, offset: 1 }}>
+                  <Player startVisualPlaying={this.startVisualPlaying} />
+                  <Row>
+                    <Col md={{ span: 6 }}>
+                      <Button className="visual-playing-button" onClick={this.startVisualPlaying}>Start Exercise</Button>
+                    </Col>
+                    <Col md={{ span: 6 }}>
+                      <Button className="exercise-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
+                    </Col>
+                  </Row>
+                </Col>
+              </Row>
             </Col>
-          </Row>
-          <Row>
-            <Col md={{ span: 8, offset: 2 }}>
-              <PitchDetector intervalEx={false}/>
-            </Col>
-          </Row>
-        </div>
+          </Row >
+        </div >
 
 
       )
@@ -126,9 +164,6 @@ class Score extends React.Component {
     }
   }
 }
-
-let myData = [{ "interval": -2, "acc": 2 }, { "interval": 1, "acc": 0 }, { "interval": -1, "acc": 1 }, { "interval": -2, "acc": 2 }, { "interval": 1, "acc": 1 }, { "interval": 2, "acc": 1 }, { "interval": -1, "acc": 1 }];
-
 
 
 function mapStateToProps(state) {

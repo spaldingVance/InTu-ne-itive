@@ -13,7 +13,7 @@
   text-align: center;
   /* border: solid black 5px;
   border-radius: 10px; */
-  padding-top: 2%;
+  padding: 2%;
 }
 
 .micImg {
@@ -40,13 +40,17 @@
 
 .train-level {
   text-align: left;
-  padding-top: 2%;
+  padding: 2%;
 }
 
-.dash-button-bottom {
-  position: relative;
-  bottom: 10px;
+.badge-img {
+  background-color: palegoldenrod;
 }
+
+.badge-card-body {
+  background-color: palegoldenrod;
+}
+
 
 
 

@@ -22,7 +22,7 @@ export function setTimeStamps(timeStamps) {
   }
 }
 export function levelUp(user_id, currentLevel) {
-  const url = `/api/user/${user_id}/levelup/${currentLevel + 1}`
+  const url = `/api/user/${user_id}/levelup/${Number(currentLevel) + 1}`
   const request = axios({
     method: 'post',
     url: url

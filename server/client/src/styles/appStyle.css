@@ -8,4 +8,22 @@
 
 html, body {
   background-color: rgb(141, 141, 141);
+  font-family: 'Average Sans', sans-serif;
+}
+
+body {
+  font-family: 'Average Sans', sans-serif;
+}
+
+.logo {
+  font-family: 'Fjalla One', sans-serif;
+  color: skyblue;
+}
+
+.app-container {
+  font-family: 'Average Sans', sans-serif !important;
+}
+
+.nameForm {
+  width: 80%;
 }

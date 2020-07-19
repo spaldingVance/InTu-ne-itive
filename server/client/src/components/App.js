@@ -23,35 +23,19 @@ class App extends React.Component {
     this.state = {
       user_id: localStorage.getItem('my_user_id')
     }
-    // this.createUser = this.createUser.bind(this);
-    console.log(this.props);
   }
 
   componentDidMount() {
-    console.log("COMPONENET DID Mount-")
-    console.log(this.props.user_id);
     if (this.state.user_id) {
-      console.log("USER ID IS " + this.state.user_id)
       this.props.getUser(this.state.user_id)
     }
   }
-
-  // componentDidUpdate() {
-  //   console.log("COMPONENET DID UPDATE-")
-  //   if (this.state.user_id && !this.props.userName) {
-  //     console.log("component updating");
-  //     console.log(this.props.userName)
-  //     console.log("USER id IS: " + this.state.user_id)
-  //     this.props.getUser(this.state.user_id)
-  //   }
-  // }
 
   createUser(event) {
     event.preventDefault();
     let id = uuidv4();
     localStorage.setItem('my_user_id', id)
     this.setState({ user_id: id })
-    console.log(this.state.name);
     this.props.setUser(this.state.name, id);
     user_id = id;
   }
@@ -66,51 +50,43 @@ class App extends React.Component {
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="#home">InTunitive</Navbar.Brand>
+            <Navbar.Brand className="logo" style={{ color: "skyblue" }} href="/">InTu(ne)itive</Navbar.Brand>
             <Nav className="mr-auto">
-              <Nav.Link href="/">Home</Nav.Link>
+              <Nav.Link style={{ color: "skyblue" }} href="/">Home</Nav.Link>
             </Nav>
-            <Navbar.Collapse className="justify-content-end">
-              <Navbar.Text>
-                Signed in as: {this.props.userName} Level: {this.props.level}
-              </Navbar.Text>
-            </Navbar.Collapse>
+            <Navbar.Text >
+              <span>Signed in as: {this.props.userName}</span> <span style={{ color: "skyblue" }}> Level: {this.props.level} </span>
+            </Navbar.Text>
+
           </Navbar>
           <Switch>
             <Route exact path={"/"} component={Goals} />
             <Route path={"/exercises/level/:level"} component={Score} />
             <Route path={"/exercises/intervals/:interval"} component={IntervalScore} />
           </Switch>
-          {/* <Score /> */}
-          {/* <Goals /> */}
         </Container>
       );
     } else {
-      console.log(user_id)
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
-            <Navbar.Brand href="#home">InTunitive</Navbar.Brand>
+            <Navbar.Brand className="logo" style={{ color: "skyblue" }} href="/">InTu(ne)itive</Navbar.Brand>
             <Nav className="mr-auto">
-              <Nav.Link href="#">Home</Nav.Link>
-              <Nav.Link href="#">Goals</Nav.Link>
-              <Nav.Link href="#">Sight Reading</Nav.Link>
-              <Nav.Link href="#">Pitch Matching</Nav.Link>
-              <Nav.Link href="#">Interval Training</Nav.Link>
-              <Nav.Link href="#">Login</Nav.Link>
+              <Nav.Link href="/">Home</Nav.Link>
             </Nav>
           </Navbar>
-          <h1>{this.props.userName}  {this.props.user_id}</h1>
           <Row>
             <Col md={{ span: 4, offset: 4 }}>
-              <Form className="nameForm">
-                <Form.Control placeholder="First Name" onChange={this.addName.bind(this)} />
+              <h1>Enter your name to get started</h1>
+              <br />
+              <Row>
+                <Form className="nameForm">
+                  <Form.Control placeholder="First Name" onChange={this.addName.bind(this)} />
+                </Form>
                 <Button type="btn btn-primary" onClick={this.createUser.bind(this)}>Submit</Button>
-              </Form>
+              </Row>
             </Col>
           </Row>
-          {/* <Score /> */}
-          {/* <Goals /> */}
         </Container>
       )
     }

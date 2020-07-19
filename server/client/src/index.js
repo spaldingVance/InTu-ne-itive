@@ -8,6 +8,8 @@ import ReduxPromise from "redux-promise";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import reducers from "./reducers";
 
+import "./styles/appStyle.css";
+
 const createStoreWithMiddleware = applyMiddleware(ReduxPromise)(createStore);
 
 ReactDOM.render(

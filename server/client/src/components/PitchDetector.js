@@ -2,7 +2,7 @@ import React from 'react';
 import { connect } from "react-redux";
 import { bindActionCreators } from "redux";
 import { setIntervalAcc, setNoteAcc, setPitchAcc } from '../actions/index'
-import { Row, Container, Col, Image, ProgressBar, Button, Card, Carousel } from 'react-bootstrap';
+import { Row, Button } from 'react-bootstrap';
 
 window.AudioContext = window.AudioContext || window.webkitAudioContext;
 
@@ -16,9 +16,6 @@ var mediaStreamSource = null;
 var pitchArr = [];
 
 var isPlaying = false;
-
-var stop = false;
-var noteStrings = ["C", "C#", "D", "D#", "E", "F", "F#", "G", "G#", "A", "A#", "B"];
 
 var updatePitchInterval;
 
@@ -36,13 +33,13 @@ class PitchDetector extends React.Component {
     this.matchOctave = this.matchOctave.bind(this);
     this.setOctave = this.setOctave.bind(this);
     this.getTimeWindowPitches = this.getTimeWindowPitches.bind(this);
+    this.toggleOscillator = this.toggleOscillator.bind(this);
   }
 
   matchOctave() {
     findOctavePitches = [];
-    
+
     audioContext = new AudioContext();
-    stop = true;
     if (isPlaying) {
       //stop playing and return
       sourceNode.stop(0);
@@ -55,22 +52,20 @@ class PitchDetector extends React.Component {
         "audio": {
           "mandatory": {
             "googEchoCancellation": "false",
-            "googAutoGainControl": "false",
-            "googNoiseSuppression": "false",
-            "googHighpassFilter": "false"
+            "googAutoGainControl": "true",
+            "googNoiseSuppression": "true",
+            "googHighpassFilter": "true"
           },
           "optional": []
         },
       }, gotStream);
-      console.log("starting interval")
-      var myInterval = setInterval(updateOctavePitches, 5);
-      setTimeout(() => clearTimeout(myInterval), 3000);
-      setTimeout(() => this.setOctave(), 3000);
+    var myInterval = setInterval(updateOctavePitches, 5);
+    setTimeout(() => clearTimeout(myInterval), 3000);
+    setTimeout(() => this.setOctave(), 3000);
   }
 
   startLiveInput() {
     audioContext = new AudioContext();
-    stop = true;
     if (isPlaying) {
       //stop playing and return
       sourceNode.stop(0);
@@ -90,23 +85,18 @@ class PitchDetector extends React.Component {
           "optional": []
         },
       }, gotStream);
-      updatePitchInterval= setInterval(updatePitch, 5);
+    updatePitchInterval = setInterval(updatePitch, 5);
   }
-  
+
   setOctave() {
     let avg = findOctavePitches.reduce((acc, cur) => acc += cur) / findOctavePitches.length;
-    console.log("AVERAGE");
-    console.log(avg);
     let note = noteFromPitch(avg);
-    console.log("NOTE");
-    console.log(note);
-    console.log(Math.round(note / 12));
     let startingNote = Math.round(note / 12) * 12;
-    this.setState({startingNote: startingNote})
+    this.setState({ startingNote: startingNote })
     if (startingNote / 12 <= 5) {
-      this.setState({audioFilters: "true"})
+      this.setState({ audioFilters: "true" })
     } else {
-      this.setState({audioFilters: "false"})
+      this.setState({ audioFilters: "false" })
     }
   }
 
@@ -115,29 +105,15 @@ class PitchDetector extends React.Component {
 
     let midiNotes = this.props.midi.map(midi => midi + this.state.startingNote);
     midiNotes.unshift(this.state.startingNote);
-    console.log("MIDI NOTES");
-    console.log(midiNotes);
-    console.log(pitchArr);
     let myWindow = this.props.timeStamps;
-    console.log(myWindow);
     let window1 = pitchArr.filter(pitch => pitch.time > myWindow[0] && pitch.time < myWindow[1]);
     let window2 = pitchArr.filter(pitch => pitch.time > myWindow[1] + 400 && pitch.time < myWindow[2]);
-    let window3 = pitchArr.filter(pitch => pitch.time > myWindow[2] + 300 && pitch.time < myWindow[3]);
-    let window4 = pitchArr.filter(pitch => pitch.time > myWindow[3] + 300 && pitch.time < myWindow[4]);
-    let window5 = pitchArr.filter(pitch => pitch.time > myWindow[4] + 300 && pitch.time < myWindow[5]);
-    let window6 = pitchArr.filter(pitch => pitch.time > myWindow[5] + 300 && pitch.time < myWindow[6]);
-    let window7 = pitchArr.filter(pitch => pitch.time > myWindow[6] + 300 && pitch.time < myWindow[7]);
-    let window8 = pitchArr.filter(pitch => pitch.time > myWindow[7] + 300 && pitch.time < myWindow[7] + 1000);
-
-    console.log(window1);
-    console.log(window2);
-    console.log(window3);
-    console.log(window4);
-    console.log(window5);
-    console.log(window6);
-    console.log(window7);
-    console.log(window8);
-
+    let window3 = pitchArr.filter(pitch => pitch.time > myWindow[2] + 400 && pitch.time < myWindow[3]);
+    let window4 = pitchArr.filter(pitch => pitch.time > myWindow[3] + 400 && pitch.time < myWindow[4]);
+    let window5 = pitchArr.filter(pitch => pitch.time > myWindow[4] + 400 && pitch.time < myWindow[5]);
+    let window6 = pitchArr.filter(pitch => pitch.time > myWindow[5] + 400 && pitch.time < myWindow[6]);
+    let window7 = pitchArr.filter(pitch => pitch.time > myWindow[6] + 400 && pitch.time < myWindow[7]);
+    let window8 = pitchArr.filter(pitch => pitch.time > myWindow[7] + 400 && pitch.time < myWindow[7] + 1000);
 
     window1 = window1.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[0] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[0] + 4)))
     window2 = window2.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[1] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[1] + 4)))
@@ -147,13 +123,11 @@ class PitchDetector extends React.Component {
     window6 = window6.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[5] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[5] + 4)))
     window7 = window7.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[6] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[6] + 4)))
     window8 = window8.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[7] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[7] + 4)))
-
-    console.log("C SHOULD BE: " + frequencyFromNoteNumber(midiNotes[0] - 6));
     let averages = [];
 
     if (window1.length === 0 || window2.length === 0 || window3.length === 0 || window4.length === 0) {
       alert("Not enough audio collected. Try moving closer to the mic.")
-    } else if (window5.length === 0 || window6.length === 0 || window7.length === 0 || window8.lengh === 0) {
+    } else if (window5.length === 0 || window6.length === 0 || window7.length === 0 || window8.length === 0) {
       alert("Not enough audio collected. Try moving closer to the mic.")
     } else {
 
@@ -170,71 +144,40 @@ class PitchDetector extends React.Component {
 
       averages.push(avg1, avg2, avg3, avg4, avg5, avg6, avg7, avg8);
 
-      let note1 = noteFromPitch(avg1);
-      let note2 = noteFromPitch(avg2);
-      let note3 = noteFromPitch(avg3);
-      let note4 = noteFromPitch(avg4);
-      let note5 = noteFromPitch(avg5);
-      let note6 = noteFromPitch(avg6);
-      let note7 = noteFromPitch(avg7);
-      let note8 = noteFromPitch(avg8);
-
-
-
-      console.log("avg1: " + avg1 + " " + noteFromPitch(avg1));
-      console.log("avg2: " + avg2 + " " + noteFromPitch(avg2));
-      console.log("avg3: " + avg3 + " " + noteFromPitch(avg3));
-      console.log("avg4: " + avg4 + " " + noteFromPitch(avg4));
-      console.log("avg5: " + avg5 + " " + noteFromPitch(avg5));
-      console.log("avg6: " + avg6 + " " + noteFromPitch(avg6));
-      console.log("avg7: " + avg7 + " " + noteFromPitch(avg7));
-      console.log("avg8: " + avg8 + " " + noteFromPitch(avg8));
-
-      console.log(noteStrings[note1 % 12]);
-      console.log(noteStrings[note2 % 12]);
-      console.log(noteStrings[note3 % 12]);
-      console.log(noteStrings[note4 % 12]);
-      console.log(noteStrings[note5 % 12]);
-      console.log(noteStrings[note6 % 12]);
-      console.log(noteStrings[note7 % 12]);
-      console.log(noteStrings[note8 % 12]);
-
-      console.log("cents off: " + centsOffFromPitch(avg1, midiNotes[0]));
-      console.log("cents off: " + centsOffFromPitch(avg2, midiNotes[1]));
-      console.log("cents off: " + centsOffFromPitch(avg3, midiNotes[2]));
-      console.log("cents off: " + centsOffFromPitch(avg4, midiNotes[3]));
-      console.log("cents off: " + centsOffFromPitch(avg5, midiNotes[4]));
-      console.log("cents off: " + centsOffFromPitch(avg6, midiNotes[5]));
-      console.log("cents off: " + centsOffFromPitch(avg7, midiNotes[6]));
-      console.log("cents off: " + centsOffFromPitch(avg8, midiNotes[7]));
-
       let avgCentsOff = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += Math.abs(cur)) / averages.length;
-      console.log("AVERAGE CENTS OFF: " + avgCentsOff);
       let pitchAccuracy = 100 - avgCentsOff;
       if (!this.props.intervalEx) {
         this.props.setPitchAcc(this.props.user_id, pitchAccuracy)
       }
-
-      let avgCentsOffRelative = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += cur) / averages.length;
       let centsOffPerNote = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note));
-      console.log("avg cents off relative _________")
-      console.log(avgCentsOffRelative);
-      console.log(centsOffPerNote);
+
+      for (let i = 0; i < 8; i++) {
+        let measureIndex = 0;
+        let noteIndex = i;
+        if (i > 3) {
+          measureIndex = Math.floor((i + 1) / 4);
+          noteIndex = (i + 1) % 4 - 1;
+          if (noteIndex === -1) {
+            noteIndex = 3;
+          }
+        }
+        if (noteIndex === 3 && measureIndex > 0) {
+          measureIndex -= 1;
+        }
+        if (centsOffPerNote[i] >= 25) {
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "red";
+        } else if (centsOffPerNote[i] <= -25) {
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "darkblue";
+        } else {
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "darkgreen";
+        }
+      }
 
       let noteAccuracy = centsOffPerNote.filter(centsOffNote => centsOffNote < 50 && centsOffNote > -50).length / centsOffPerNote.length * 100;
-      console.log("note accuracy: " + noteAccuracy);
       if (!this.props.intervalEx) {
         this.props.setNoteAcc(this.props.user_id, noteAccuracy);
       }
 
-      console.log(window1);
-      console.log(window2);
-      console.log(window3);
-      console.log(window4);
-      console.log(window5);
-      console.log(window6);
-      console.log(window7);
-      console.log(window8);
       if (this.props.intervalEx) {
         let intervals = [];
         for (let i = 1; i < midiNotes.length; i++) {
@@ -242,94 +185,63 @@ class PitchDetector extends React.Component {
         }
 
         let intervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]) - centsOffPerNote[0]) } })
-        console.log("INTERVAL ACCURACY");
-        console.log(intervalAccuracy);
-        console.log(intervals);
         intervalAccuracy.forEach(interval => {
           let accuracy = (100 - Math.abs(interval.centsOff)) % 100;
-          console.log("accuracy: " + accuracy)
           this.props.setIntervalAcc(this.props.user_id, accuracy, interval.interval)
         })
 
       }
+      alert(`Note Accuracy: ${noteAccuracy}   Pitch Accuracy: ${pitchAccuracy}`);
     }
-
-    // let relativeIntervalAccuracy = intervals.map((interval, index) => { return { interval: interval, centsOff: (centsOffFromPitch(averages[index + 1], midiNotes[index + 1]))}})
-    // console.log("INTERVAL ACCURACY");
-    // console.log(intervalAccuracy);
   }
 
-  // componentDidUpdate() {
-  //   let pitches = this.props.exercise.split(' ').slice(1).map(pitch => {
-  //     // if(pitch.length === 1) {
-  //     //   return pitch[0]
-  //     // } else if (pitch.length === 2 && (pitch[0] !== '^' || pitch[0] != '_')) {
-  //     //   return pitch[0];
-  //     // } else if (pitch.length === 2) {
-  //     //   return pitch[1];
-  //     // } else if (pitch.length === 3 && (pitch[0] !== '^' || pitch[0] != '_')) {
-  //     //   return pitch[0];
-  //     // } else if (pitch.length === 3) {
 
-  //     // }
-  //     if (pitch[0] === '^') {
-  //       return pitch[1] + "#";
-  //     } else if (pitch[0] === '_') {
-  //       return pitch[1] + "b";
-  //     } else {
-  //       return pitch[0];
-  //     }
-  //   });
-  //   console.log(pitches);
+  toggleOscillator() {
+    let audioContext = new AudioContext();
+    if (isPlaying) {
+      //stop playing and return
+      sourceNode.stop(0);
+      sourceNode = null;
+      analyser = null;
+      isPlaying = false;
+      return "play oscillator";
+    }
+    sourceNode = audioContext.createOscillator();
+    let frequency = frequencyFromNoteNumber(this.state.startingNote)
 
-  // }
+    analyser = audioContext.createAnalyser();
+    analyser.fftSize = 2048;
+    sourceNode.connect(analyser);
+    analyser.connect(audioContext.destination);
+    sourceNode.frequency.setValueAtTime(frequency, audioContext.currentTime);
+    sourceNode.start(0);
+    isPlaying = true;
+
+    return "stop";
+  }
+
   render() {
     return (
-      <div>
-        <Button onClick={this.startLiveInput}>Start Live Input</Button>
-        <Button onClick={this.getTimeWindowPitches}>Click to Get Results</Button>
-        <Button onClick={toggleOscillator}>Play Starting Note</Button>
-        <h1>starting note C{this.state.startingNote / 12 - 1}</h1>
-        <Button onClick={this.matchOctave}>Match Octave</Button>
+      <div className="pitch-detector-div">
+        <Row style={{ textAlign: "center" }}>
+          <h5>Starting Note: C{this.state.startingNote / 12 - 1}</h5>
+        </Row>
+        <Row style={{ textAlign: "center" }}>
+          <Button className="sidebar-button" onClick={this.toggleOscillator}>Play Starting Note</Button>
+        </Row>
+        <Row style={{ textAlign: "center" }}>
+          <Button className="sidebar-button" onClick={this.matchOctave}>Match Octave</Button>
+        </Row>
+        <Row style={{ textAlign: "center" }}>
+          <Button className="sidebar-button" onClick={this.startLiveInput}>Start Live Input</Button>
+        </Row>
+        <Row style={{ textAlign: "center" }}>
+          <Button className="sidebar-button" onClick={this.getTimeWindowPitches}>Get Results</Button>
+        </Row>
+
       </div>
     )
   }
-}
-
-
-
-
-
-
-function toggleOscillator() {
-  let audioContext = new AudioContext();
-  if (isPlaying) {
-    console.log("PLAYING")
-    //stop playing and return
-    sourceNode.stop(0);
-    sourceNode = null;
-    analyser = null;
-    isPlaying = false;
-    return "play oscillator";
-  }
-  sourceNode = audioContext.createOscillator();
-
-  analyser = audioContext.createAnalyser();
-  analyser.fftSize = 2048;
-  sourceNode.connect(analyser);
-  analyser.connect(audioContext.destination);
-  sourceNode.frequency.setValueAtTime(262, audioContext.currentTime);
-  sourceNode.start(0);
-  isPlaying = true;
-  // isLiveInput = false;
-  // updatePitch();
-
-  return "stop";
-}
-
-function collectPitches() {
-  var myInterval = setInterval(updatePitch, 5);
-  setTimeout(() => clearTimeout(myInterval), 15000);
 }
 
 function getUserMedia(dictionary, callback) {
@@ -345,7 +257,6 @@ function getUserMedia(dictionary, callback) {
 }
 
 function gotStream(stream) {
-  console.log("GOT STREAM");
   // Create an AudioNode from the stream.
   mediaStreamSource = audioContext.createMediaStreamSource(stream);
 
@@ -353,18 +264,12 @@ function gotStream(stream) {
   analyser = audioContext.createAnalyser();
   analyser.fftSize = 2048;
   mediaStreamSource.connect(analyser);
-  // for (let i = 0; i < 2000; i++) {
-  //   updatePitch();
-  // }
-  console.log("DONE");
 }
 
 function error() {
   alert('Stream generation failed.');
 }
 
-var rafID = null;
-var tracks = null;
 var buflen = 1024;
 var buf = new Float32Array(buflen);
 
@@ -392,16 +297,10 @@ function centsOffFromPitch(frequency, note) {
   let avgCentsOff = centsCollection.slice(0, 20).reduce((acc, cur) => acc + cur) / avgLength;
   avgCentsCollection.push(avgCentsOff);
   if (avgCentsOff >= 5 && avgCentsOff > 0) {
-    // document.getElementById('sharp-notifier').style.color = "red";
-    // document.getElementById('flat-notifier').style.color = "white";
     return cents;
   } else if (avgCentsOff < 0 && avgCentsOff < -5) {
-    // document.getElementById('flat-notifier').style.color = "red";
-    // document.getElementById('sharp-notifier').style.color = "white";
     return cents;
   } else {
-    // document.getElementById('flat-notifier').style.color = "white";
-    // document.getElementById('sharp-notifier').style.color = "white";
     return cents;
   }
 }
@@ -436,7 +335,7 @@ function autoCorrelate(buf, sampleRate) {
       correlation += Math.abs((buf[i]) - (buf[i + offset]));
     }
     correlation = 1 - (correlation / MAX_SAMPLES);
-    correlations[offset] = correlation; // store it, for the tweaking we need to do below.
+    correlations[offset] = correlation;
     if ((correlation > GOOD_ENOUGH_CORRELATION) && (correlation > lastCorrelation)) {
       foundGoodCorrelation = true;
       if (correlation > best_correlation) {
@@ -444,26 +343,15 @@ function autoCorrelate(buf, sampleRate) {
         best_offset = offset;
       }
     } else if (foundGoodCorrelation) {
-      // short-circuit - we found a good correlation, then a bad one, so we'd just be seeing copies from here.
-      // Now we need to tweak the offset - by interpolating between the values to the left and right of the
-      // best offset, and shifting it a bit.  This is complex, and HACKY in this code (happy to take PRs!) -
-      // we need to do a curve fit on correlations[] around best_offset in order to better determine precise
-      // (anti-aliased) offset.
-
-      // we know best_offset >=1, 
-      // since foundGoodCorrelation cannot go to true until the second pass (offset=1), and 
-      // we can't drop into this clause until the following pass (else if).
       var shift = (correlations[best_offset + 1] - correlations[best_offset - 1]) / correlations[best_offset];
       return sampleRate / (best_offset + (8 * shift));
     }
     lastCorrelation = correlation;
   }
   if (best_correlation > 0.01) {
-    // console.log("f = " + sampleRate/best_offset + "Hz (rms: " + rms + " confidence: " + best_correlation + ")")
     return sampleRate / best_offset;
   }
   return -1;
-  //	var best_frequency = sampleRate/best_offset;
 }
 
 const MaxPitch = 2000;
@@ -480,9 +368,6 @@ function updatePitch(time) {
       if (pitch > MinPitch && pitch < MaxPitch) {
         pitchArr.push({ pitch: pitch, time: performance.now() });
       }
-      var note = noteFromPitch(pitch);
-      // findNextPitch(noteStrings[note % 12]);
-      var detune = centsOffFromPitch(pitch, note);
     }
   }
 }
@@ -492,206 +377,13 @@ function updateOctavePitches() {
     analyser.getFloatTimeDomainData(buf);
     var ac = autoCorrelate(buf, audioContext.sampleRate);
     if (ac == -1) {
-
     } else {
       let pitch = ac;
       if (pitch > MinPitch && pitch < MaxPitch) {
         findOctavePitches.push(pitch);
       }
-      var note = noteFromPitch(pitch);
-      // findNextPitch(noteStrings[note % 12]);
-      var detune = centsOffFromPitch(pitch, note);
     }
   }
-}
-
-
-
-function filterOutliers(someArray) {
-
-  if (someArray.length < 4)
-    return someArray;
-
-  let values, q1, q3, iqr, maxValue, minValue;
-
-  values = someArray.slice().sort((a, b) => a - b);//copy array fast and sort
-
-  if ((values.length / 4) % 1 === 0) {//find quartiles
-    q1 = 1 / 2 * (values[(values.length / 4)] + values[(values.length / 4) + 1]);
-    q3 = 1 / 2 * (values[(values.length * (3 / 4))] + values[(values.length * (3 / 4)) + 1]);
-  } else {
-    q1 = values[Math.floor(values.length / 4 + 1)];
-    q3 = values[Math.ceil(values.length * (3 / 4) + 1)];
-  }
-
-  iqr = q3 - q1;
-  maxValue = q3 + iqr * 1.5;
-  minValue = q1 - iqr * 1.5;
-
-  return values.filter((x) => (x >= minValue) && (x <= maxValue));
-}
-
-function findConsistentBlock(note, myPitchArr) {
-  let myPitch = 0;
-  for (let i = 5; i < myPitchArr.length - 5; i++) {
-    let block = myPitchArr.slice(i - 5, i + 5).map(pitch => pitch.pitch);
-    let avg = block.reduce((acc, cur) => acc + cur) / block.length;
-    console.log(avg);
-    var myNote = noteFromPitch(avg);
-    myPitch = frequencyFromNoteNumber(myNote)
-    console.log(myNote);
-    console.log(noteStrings[myNote % 12]);
-    if (noteStrings[myNote % 12] === note) {
-      console.log("BLOCK: " + block);
-      console.log("AVG: " + avg);
-      console.log(i - 5);
-      let upperIndex = findUpperIndex(i + 5, note, myPitchArr)
-      let lowerIndex = findLowerIndex(i - 5, upperIndex, note, myPitchArr);
-      let unmappedBlock = myPitchArr.slice(lowerIndex, upperIndex);
-      block = unmappedBlock.map(pitch => pitch.pitch)
-      avg = block.reduce((acc, cur) => acc + cur) / block.length;
-      console.log(avg);
-      console.log(block.length);
-      console.log(block[block.length - 1]);
-      console.log(block);
-      console.log(myPitchArr[upperIndex + 1] + " " + myPitchArr[upperIndex + 2] + " " + myPitchArr[upperIndex + 3])
-      findTimeWindow(lowerIndex, upperIndex, pitchArr);
-      return { upperIndex: upperIndex, block: unmappedBlock };
-    }
-  }
-}
-
-function findUpperIndex(upper, note, myPitchArr) {
-  let lower = upper - 10;
-  let upperIndex = upper;
-  let avg;
-  let myPitch = 0;
-  for (let i = upper; i < myPitchArr.length; i++) {
-    let block = myPitchArr.slice(lower, i).map(pitch => pitch.pitch);
-    if (myPitch > 0 && myPitchArr[i].pitch > myPitch * 1.05 || myPitchArr[i].pitch < myPitch * 0.95) {
-      // console.log(myPitchArr[i-1].pitch);
-      // console.log(myPitchArr[i].pitch);
-      // console.log(myPitchArr[i+1].pitch);
-      // console.log(myPitchArr[i+2].pitch);
-      console.log("BAH up");
-      break;
-    }
-    avg = block.reduce((acc, cur) => acc + cur) / block.length;
-    console.log(avg);
-    var myNote = noteFromPitch(avg);
-    myPitch = frequencyFromNoteNumber(myNote)
-    if (noteStrings[myNote % 12] === note) {
-      upperIndex = i;
-    } else {
-      break;
-    }
-  }
-  return upperIndex;
-}
-
-function findLowerIndex(lower, upper, note, myPitchArr) {
-  let lowerIndex = lower;
-  let avg;
-  let myPitch = 0;
-  for (let i = lower; i > 0; i--) {
-    let block = myPitchArr.slice(i, upper).map(pitch => pitch.pitch);
-    if (myPitch > 0 && myPitchArr[i].pitch < myPitch * 0.95 || myPitchArr[i].pitch > myPitch * 1.05) {
-      // console.log(myPitchArr[i + 1].pitch);
-      // console.log(myPitchArr[i].pitch);
-      // console.log(myPitchArr[i-1].pitch);
-      // console.log(myPitchArr[i-2].pitch);
-      console.log("BAH down");
-      break;
-    }
-    avg = block.reduce((acc, cur) => acc + cur) / block.length;
-    console.log(avg);
-    var myNote = noteFromPitch(avg);
-    myPitch = frequencyFromNoteNumber(myNote);
-    if (noteStrings[myNote % 12] === note) {
-      lowerIndex = i;
-    } else {
-      break;
-    }
-  }
-  return lowerIndex;
-}
-
-function findTimeWindow(lower, upper, myPitchArr) {
-  let windowStart = myPitchArr[lower].time
-  let windowEnd = myPitchArr[upper].time
-  let timeTotal = windowEnd - windowStart;
-  console.log("TOTAL TIME: " + timeTotal);
-}
-
-var noteArr = [];
-
-var noteTimes = [
-  { note: 'C', playTime: 480 },
-  { note: 'D', playTime: 480 },
-  { note: 'E', playTime: 960 },
-  { note: 'G', playTime: 480 },
-  { note: 'E', playTime: 480 },
-  { note: 'C', playTime: 960 },
-  { note: 'D', playTime: 720 },
-  { note: 'E', playTime: 240 },
-  { note: 'D', playTime: 720 },
-  { note: 'C', playTime: 240 },
-  { note: 'C', playTime: 1823 }
-]
-
-function findNotes() {
-  let myPitchArr = pitchArr.slice();
-  noteTimes.forEach(note => {
-    let obj = findConsistentBlock(note.note, myPitchArr);
-    let block = [];
-    if (obj && Object.keys(obj).includes("block")) {
-      block = obj.block;
-      let upperIndex = obj.upperIndex;
-      let timeWindow = block[block.length - 1].time - block[0].time;
-      let windowStart = block[0].time;
-      let windowEnd = block[block.length - 1].time
-      noteArr.push({ note: note.note, block: block, timeWindow: timeWindow, start: windowStart, end: windowEnd })
-      myPitchArr = myPitchArr.slice(upperIndex);
-    }
-  })
-  console.log(noteArr);
-  let adjustedTimeWindows = [];
-  noteArr.forEach((note, index) => {
-    if (index != noteArr.length - 1) {
-      let myWindow = noteArr[index + 1].start - noteArr[index].start;
-      adjustedTimeWindows.push(myWindow);
-    }
-  })
-  console.log(adjustedTimeWindows)
-  let myStartIndex = pitchArr.findIndex(pitch => pitch.time === noteArr[0].start);
-  let myEndIndex = pitchArr.findIndex(pitch => pitch.time === noteArr[noteArr.length - 1].end);
-  console.log(myStartIndex);
-  console.log(myEndIndex);
-
-  let firstTimeWindow = noteArr[1].timeWindow;
-  let firstArrLength = noteArr[1].block.length;
-  let relativeTimes = noteArr.map(note => note.timeWindow / firstTimeWindow);
-  let relativeLengths = noteArr.map(note => note.block.length / firstArrLength);
-  console.log(relativeTimes);
-  console.log(relativeLengths);
-  let combined = relativeTimes.map((time, index) => (time + relativeLengths[index]) / 2)
-  console.log(combined);
-  let reducedCombined = combined.map(time => Math.round(time * 2) / 2)
-  console.log(reducedCombined);
-}
-
-let myPitches = ['A', 'B', 'C', 'D', 'E'];
-
-function findNextPitch(note) {
-  if (myPitches[0] === note) {
-    console.log("found pitch " + myPitches[0] + " from " + myPitches);
-    myPitches.shift();
-  }
-
-}
-
-function viewPitchArr() {
-  console.log(pitchArr);
 }
 
 function mapDispatchToProps(dispatch) {
@@ -700,7 +392,6 @@ function mapDispatchToProps(dispatch) {
     dispatch
   );
 }
-
 
 function mapStateToProps(state) {
   return {
