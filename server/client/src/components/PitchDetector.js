@@ -53,7 +53,7 @@ class PitchDetector extends React.Component {
           "mandatory": {
             "googEchoCancellation": "false",
             "googAutoGainControl": "true",
-            "googNoiseSuppression": "true",
+            "googNoiseSuppression": "false",
             "googHighpassFilter": "true"
           },
           "optional": []
@@ -79,7 +79,7 @@ class PitchDetector extends React.Component {
           "mandatory": {
             "googEchoCancellation": "false",
             "googAutoGainControl": this.state.audioFilters,
-            "googNoiseSuppression": this.state.audioFilters,
+            "googNoiseSuppression": "false",
             "googHighpassFilter": this.state.audioFilters
           },
           "optional": []
@@ -144,12 +144,26 @@ class PitchDetector extends React.Component {
 
       averages.push(avg1, avg2, avg3, avg4, avg5, avg6, avg7, avg8);
 
+      console.log(window1);
+      console.log(window2);
+      console.log(window3);
+      console.log(window4);
+      console.log(window5);
+      console.log(window6);
+      console.log(window7);
+      console.log(window8);
+
+      console.log(averages);
+
       let avgCentsOff = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note)).reduce((acc, cur) => acc += Math.abs(cur)) / averages.length;
       let pitchAccuracy = 100 - avgCentsOff;
       if (!this.props.intervalEx) {
         this.props.setPitchAcc(this.props.user_id, pitchAccuracy)
       }
       let centsOffPerNote = midiNotes.map((note, index) => centsOffFromPitch(averages[index], note));
+      console.log(centsOffPerNote);
+      console.log(midiNotes)
+      console.log(centsOffFromPitch(127.45, 47))
 
       for (let i = 0; i < 8; i++) {
         let measureIndex = 0;
@@ -164,9 +178,9 @@ class PitchDetector extends React.Component {
         if (noteIndex === 3 && measureIndex > 0) {
           measureIndex -= 1;
         }
-        if (centsOffPerNote[i] >= 25) {
+        if (centsOffPerNote[i] >= 30) {
           document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "orangered";
-        } else if (centsOffPerNote[i] <= -25) {
+        } else if (centsOffPerNote[i] <= -30) {
           document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "royalblue";
         } else {
           document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "lawngreen";
@@ -355,7 +369,7 @@ function autoCorrelate(buf, sampleRate) {
 }
 
 const MaxPitch = 2000;
-const MinPitch = 98;
+const MinPitch = 70;
 
 function updatePitch(time) {
   if (analyser) {
