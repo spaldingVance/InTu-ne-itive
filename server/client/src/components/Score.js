@@ -17,6 +17,17 @@ let timeStamps = [];
 
 let isPlaying = false;
 
+let levelIntervals = {
+  "1": "a Major Second",
+  "2": "a Major Third",
+  "3": "a Perfect Fourth",
+  "4": "a Perfect Fifth",
+  "5": "a Major Sixth",
+  "6": "a Major Seventh",
+  "7": "an Octave",
+  "8": "an Octave"
+}
+
 class Score extends React.Component {
   constructor(props) {
     super(props)
@@ -107,16 +118,24 @@ class Score extends React.Component {
         <div style={{ textAlign: "center" }} className="score-div">
           <Row>
             <Col md={{ span: 2 }} >
+
               <PitchDetector intervalEx={false} />
               <br />
               <h5>To Get Started: </h5>
               <ul style={{ textAlign: "left" }}>
                 <li>Play the starting pitch</li>
                 <li>If you would like to use a different octave, press "Match Octave" and sing/whistle the starting note back in the octave of your choice</li>
-                <li>Press "Start Live Input" and then "Start Exercise" when you're ready to begin</li>
+                <li>Press "Start Live Input" to begin</li>
                 <li>When you're done, press "Get Results"</li>
                 <li>If you would like to switch our the exercise for another one, press "Load New Exercise"</li>
               </ul>
+              <br />
+              <div className="rounded" style={{backgroundColor: "#f9f9f9"}}>
+                <h3>Results Legend</h3>
+                <h5 style={{ color: "orangered" }}>Sharp</h5>
+                <h5 style={{ color: "royalblue" }}>Flat</h5>
+                <h5 style={{ color: "mediumseagreen" }}>On Pitch</h5>
+              </div>
             </Col>
             <Col md={{ span: 10 }}>
 
@@ -124,40 +143,21 @@ class Score extends React.Component {
               <Row style={{ textAlign: "center" }}>
                 <Col md={{ span: 12 }} className="title-container">
                   <h1>Exercise: Level {this.state.level}</h1>
-                  <h4>All Intervals will be less than </h4>
+                  <h4>All Intervals will be less than {levelIntervals[this.state.level]}</h4>
+                  <Row style={{ textAlign: "center" }}>
+                    <Col md={{ span: 2, offset: 5 }}>
+                      <Button className="sidebar-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
               <Row>
-                <Col md={{ span: 10, offset: 1 }} >
-                  <Notation notation={this.props.exercise} engraverParams={engraverParams} className="notation-container" />
-                </Col>
-              </Row>
-              <Row>
-                <Col md={{ span: 10, offset: 1 }}>
+                <Col md={{ span: 10, offset: 1 }} className="notation-container rounded">
+                  <Notation notation={this.props.exercise} engraverParams={engraverParams} />
+                  <Row>
+                    <h5 className="play-back">Press Play to Hear The Melody Played Back</h5>
+                  </Row>
                   <Player startVisualPlaying={this.startVisualPlaying} />
-                  <Row>
-                    <Col md={{ span: 6 }}>
-                      <Button className="visual-playing-button" onClick={this.startVisualPlaying}>Start Exercise</Button>
-                    </Col>
-                    <Col md={{ span: 6 }}>
-                      <Button className="exercise-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <br />
-                    <Col md={{ span: 4, offset: 5 }} >
-                      <Row className="results-legend">
-                        <h3>Results Legend</h3>
-                      </Row>
-                      <Row className="results-legend">
-                        <ul>
-                          <li style={{ color: "orangered" }}><h5>Sharp</h5></li>
-                          <li style={{ color: "royalblue" }}><h5>Flat</h5></li>
-                          <li style={{ color: "lawngreen" }}><h5>On Pitch</h5></li>
-                        </ul>
-                      </Row>
-                    </Col>
-                  </Row>
                 </Col>
               </Row>
             </Col>

@@ -1,19 +1,19 @@
 .goalsContainer{
-  background-color: rgb(141, 141, 141)
+  background-color: #f9f9f9;
 }
 
 .note-goal-data {
   /* border: solid black 5px;
   border-radius: 10px; */
   text-align: center;
-  padding: 2%;
+  padding: 1%;
 }
 
 .pitch-goal-data {
   text-align: center;
   /* border: solid black 5px;
   border-radius: 10px; */
-  padding: 2%;
+  padding: 1%;
 }
 
 .micImg {
@@ -26,7 +26,6 @@
 
 .badge-carousel {
   text-align: center;
-  margin-top: 3%;
 }
 
 .welcome-back {
@@ -40,7 +39,7 @@
 
 .train-level {
   text-align: left;
-  padding: 2%;
+  padding: 1%;
 }
 
 .badge-img {
@@ -49,6 +48,27 @@
 
 .badge-card-body {
   background-color: palegoldenrod;
+}
+
+.progress-bar {
+  background-color: mediumseagreen !important;
+}
+
+.goal-data-container {
+  border: 10px solid #343a40 !important;
+  /* margin: 10px; */
+  height: 100%;
+  width: 100%;
+  padding: 5px;
+  background-color: #f9f9f9;
+}
+
+.carousel-control-next-icon {
+  background-color: #343a40 !important;
+}
+
+.carousel-control-prev-icon {
+  background-color: #343a40 !important;
 }
 
 

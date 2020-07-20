@@ -50,12 +50,12 @@ class App extends React.Component {
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
-            <Navbar.Brand className="logo" style={{ color: "skyblue" }} href="/">InTu(ne)itive</Navbar.Brand>
+            <Navbar.Brand className="logo" style={{ color: "mediumseagreen" }} href="/">InTu(ne)itive</Navbar.Brand>
             <Nav className="mr-auto">
-              <Nav.Link style={{ color: "skyblue" }} href="/">Home</Nav.Link>
+              <Nav.Link style={{ color: "mediumseagreen" }} href="/">Home</Nav.Link>
             </Nav>
             <Navbar.Text >
-              <span>Signed in as: {this.props.userName}</span> <span style={{ color: "skyblue" }}> Level: {this.props.level} </span>
+              <span>Signed in as: {this.props.userName}</span> <span style={{ color: "mediumseagreen" }}> Level: {this.props.level} </span>
             </Navbar.Text>
 
           </Navbar>

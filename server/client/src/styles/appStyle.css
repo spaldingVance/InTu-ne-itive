@@ -1,16 +1,16 @@
 .container-fluid {
   /* background-image: url(../assets/gray-background.jpg); */
-  background-color: gray ;
+  background-color: #e5ab78 ;
   padding: 0;
   height: 100%;
   margin-right:auto;
   margin-left:auto;
-  color: ivory;
+  color:  #343a40;
 }
 
 html, body {
   /* background-image: url(../assets/gray-background.jpg); */
-  background-color: gray ;
+  background-color: #e5ab78;
   font-family: 'Average Sans', sans-serif;
 }
 
@@ -20,7 +20,7 @@ body {
 
 .logo {
   font-family: 'Fjalla One', sans-serif;
-  color: skyblue;
+  color: mediumseagreen;
 }
 
 .app-container {
@@ -28,7 +28,7 @@ body {
 }
 
 .card-title {
-  color: black;
+  color:  #343a40;
 }
 
 .nameForm {
@@ -48,6 +48,7 @@ body {
   font-family: 'Average Sans', sans-serif;
 }
 
-.button-primary {
-  color: skyblue;
+.btn-primary {
+  background-color: mediumseagreen !important;
+  border-color: mediumseagreen !important;
 }

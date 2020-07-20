@@ -21,6 +21,8 @@ var updatePitchInterval;
 
 let findOctavePitches = [];
 
+let timeStamps = [];
+
 
 class PitchDetector extends React.Component {
   constructor(props) {
@@ -34,6 +36,71 @@ class PitchDetector extends React.Component {
     this.setOctave = this.setOctave.bind(this);
     this.getTimeWindowPitches = this.getTimeWindowPitches.bind(this);
     this.toggleOscillator = this.toggleOscillator.bind(this);
+    // this.startVisualPlaying = this.startVisualPlaying.bind(this);
+  }
+
+  startVisualPlaying = (collectPitches = false) => {
+    if (isPlaying) {
+      isPlaying = false;
+      for (let i = 0; i < 4; i++) {
+        let notes = document.getElementsByClassName("abcjs-n" + i);
+        notes[0].style.fill = "black";
+        notes[1].style.fill = "black";
+      }
+      return null;
+
+
+    }
+    isPlaying = true;
+    if (collectPitches) timeStamps = [];
+    var i = 0;
+    let timedInterval;
+    (function change() {
+      if (!isPlaying) {
+        isPlaying = false;
+        for (let i = 0; i < 4; i++) {
+          let notes = document.getElementsByClassName("abcjs-n" + i);
+          notes[0].style.fill = "black";
+          notes[1].style.fill = "black";
+          clearInterval(timedInterval);
+          return null;
+        }
+      }
+
+      let measureIndex = 0;
+      let noteIndex = i;
+      if (i > 3) {
+        measureIndex = Math.floor((i + 1) / 4);
+        noteIndex = (i + 1) % 4 - 1;
+        if (noteIndex === -1) {
+          noteIndex = 3;
+        }
+      }
+      if (noteIndex === 3 && measureIndex > 0) {
+        measureIndex -= 1;
+      }
+      if (i === 8) {
+        document.getElementsByClassName("abcjs-n3")[1].style.fill = "black";
+        clearInterval(timedInterval);
+        isPlaying = false;
+        return null;
+      } else {
+        document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "red";
+
+        if (noteIndex > 0) {
+          document.getElementsByClassName("abcjs-n" + (noteIndex - 1))[measureIndex].style.fill = "black";
+        } else if (noteIndex === 0 && measureIndex > 0) {
+          document.getElementsByClassName("abcjs-n" + (noteIndex + 3))[measureIndex - 1].style.fill = "black";
+        }
+        i++;
+        if (collectPitches) {
+          timeStamps.push(performance.now());
+        }
+      }
+      clearInterval(timedInterval);
+      timedInterval = setInterval(change, 1000);
+    })();
+    
   }
 
   matchOctave() {
@@ -86,6 +153,7 @@ class PitchDetector extends React.Component {
         },
       }, gotStream);
     updatePitchInterval = setInterval(updatePitch, 5);
+    this.startVisualPlaying(true);
   }
 
   setOctave() {
@@ -105,7 +173,7 @@ class PitchDetector extends React.Component {
 
     let midiNotes = this.props.midi.map(midi => midi + this.state.startingNote);
     midiNotes.unshift(this.state.startingNote);
-    let myWindow = this.props.timeStamps;
+    let myWindow = timeStamps;
     let window1 = pitchArr.filter(pitch => pitch.time > myWindow[0] && pitch.time < myWindow[1]);
     let window2 = pitchArr.filter(pitch => pitch.time > myWindow[1] + 400 && pitch.time < myWindow[2]);
     let window3 = pitchArr.filter(pitch => pitch.time > myWindow[2] + 400 && pitch.time < myWindow[3]);
@@ -183,7 +251,7 @@ class PitchDetector extends React.Component {
         } else if (centsOffPerNote[i] <= -30) {
           document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "royalblue";
         } else {
-          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "lawngreen";
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "mediumseagreen";
         }
       }
 
@@ -193,6 +261,7 @@ class PitchDetector extends React.Component {
       }
 
       if (this.props.intervalEx) {
+        console.log("interval accuracy setting")
         let intervals = [];
         for (let i = 1; i < midiNotes.length; i++) {
           intervals.push(midiNotes[i] - midiNotes[i - 1]);

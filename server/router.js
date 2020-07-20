@@ -77,6 +77,8 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:${interval}`
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
+      console.log('interval acc data')
+      console.log(reply);
       response.send({ interval: interval, acc: reply })
     })
   })

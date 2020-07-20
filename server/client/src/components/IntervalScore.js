@@ -130,11 +130,17 @@ class IntervalScore extends React.Component {
               <ul style={{ textAlign: "left" }}>
                 <li>Play the starting pitch</li>
                 <li>If you would like to use a different octave, press "Match Octave" and sing/whistle the starting note back in the octave of your choice</li>
-                <li>Press "Start Live Input" and then "Start Exercise" when you're ready to begin</li>
+                <li>Press "Start Live Input" to begin</li>
                 <li>When you're done, press "Get Results"</li>
-                <li>Use the play bar below the exercise if you would like the exercise played back</li>
-                <li>If you would like to switch out the exercise for another one, press "Load New Exercise"</li>
+                <li>If you would like to switch our the exercise for another one, press "Load New Exercise"</li>
               </ul>
+              <br />
+              <div className="rounded" style={{ backgroundColor: "#f9f9f9" }}>
+                <h3>Results Legend</h3>
+                <h5 style={{ color: "orangered" }}>Sharp</h5>
+                <h5 style={{ color: "royalblue" }}>Flat</h5>
+                <h5 style={{ color: "mediumseagreen" }}>On Pitch</h5>
+              </div>
             </Col>
             <Col md={{ span: 10 }}>
 
@@ -143,44 +149,25 @@ class IntervalScore extends React.Component {
                 <Col md={{ span: 12 }} className="title-container">
                   <h1>Interval Exercise: {intervalNames[this.state.level]}</h1>
                   <h4>All Intervals will be a {intervalNames[this.state.level]}</h4>
+                  <Row style={{ textAlign: "center" }}>
+                    <Col md={{ span: 2, offset: 5 }}>
+                      <Button className="sidebar-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
+                    </Col>
+                  </Row>
                 </Col>
               </Row>
               <Row>
-                <Col md={{ span: 10, offset: 1 }} >
-                  <Notation notation={this.props.exercise} engraverParams={engraverParams} className="notation-container" />
-                </Col>
-              </Row>
-              <Row>
-                <Col md={{ span: 10, offset: 1 }}>
+                <Col md={{ span: 10, offset: 1 }} className="notation-container rounded">
+                  <Notation notation={this.props.exercise} engraverParams={engraverParams} />
+                  <Row>
+                    <h5 className="play-back">Press Play to Hear The Melody Played Back</h5>
+                  </Row>
                   <Player startVisualPlaying={this.startVisualPlaying} />
-                  <Row>
-                    <Col md={{ span: 6 }}>
-                      <Button className="visual-playing-button" onClick={this.startVisualPlaying}>Start Exercise</Button>
-                    </Col>
-                    <Col md={{ span: 6 }}>
-                      <Button className="exercise-button" onClick={() => this.loadExercise(this.state.level)}>Load New Exercise</Button>
-                    </Col>
-                  </Row>
-                  <Row>
-                    <br />
-                    <Col md={{ span: 4, offset: 5 }} >
-                      <Row className="results-legend">
-                        <h4>Results Legend</h4>
-                      </Row>
-                      <Row className="results-legend">
-                        <ul>
-                          <li style={{ color: "orangered" }}>Sharp</li>
-                          <li style={{ color: "royalblue" }}>Flat</li>
-                          <li style={{ color: "lawngreen" }}>On Pitch</li>
-                        </ul>
-                      </Row>
-                    </Col>
-                  </Row>
                 </Col>
               </Row>
             </Col>
-          </Row>
-        </div>
+          </Row >
+        </div >
 
 
       )

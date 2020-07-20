@@ -36,3 +36,12 @@
   text-align: center;
   margin: 0 auto;
 }
+
+.notation-container {
+  background-color: #f9f9f9;
+}
+
+.play-back {
+  float: left;
+  margin-left: 10px;
+}
