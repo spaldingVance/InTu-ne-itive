@@ -73,9 +73,9 @@ class App extends React.Component {
       return (
         <Container className="appContainer" fluid>
           <Navbar bg="dark" variant="dark">
-            <Navbar.Brand className="logo" style={{ color: "skyblue" }} href="/">InTu(ne)itive</Navbar.Brand>
+            <Navbar.Brand className="logo" style={{ color: "mediumseagreen" }} href="/">InTu(ne)itive</Navbar.Brand>
             <Nav className="mr-auto">
-              <Nav.Link href="/">Home</Nav.Link>
+              <Nav.Link style={{ color: "mediumseagreen" }} href="/">Home</Nav.Link>
             </Nav>
           </Navbar>
           <Row>
