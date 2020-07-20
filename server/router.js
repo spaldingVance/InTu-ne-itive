@@ -77,7 +77,7 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:${interval}`
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
-      response.send({ interval: interval, acc: reply.reverse() })
+      response.send({ interval: interval, acc: reply })
     })
   })
 
@@ -85,7 +85,7 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:noteAcc`;
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
-      response.send(reply.reverse())
+      response.send(reply)
     })
   })
 
@@ -93,7 +93,7 @@ module.exports = function (router) {
     let userId = request.params.userId
     let redisPath = `${userId}:pitchAcc`;
     request.redis.lrange(redisPath, 0, 100, function (err, reply) {
-      response.send(reply.reverse())
+      response.send(reply)
     })
   })
 

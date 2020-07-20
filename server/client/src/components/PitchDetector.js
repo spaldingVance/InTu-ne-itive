@@ -165,11 +165,11 @@ class PitchDetector extends React.Component {
           measureIndex -= 1;
         }
         if (centsOffPerNote[i] >= 25) {
-          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "red";
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "orangered";
         } else if (centsOffPerNote[i] <= -25) {
-          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "darkblue";
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "royalblue";
         } else {
-          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "darkgreen";
+          document.getElementsByClassName("abcjs-n" + noteIndex)[measureIndex].style.fill = "lawngreen";
         }
       }
 

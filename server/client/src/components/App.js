@@ -64,6 +64,9 @@ class App extends React.Component {
             <Route path={"/exercises/level/:level"} component={Score} />
             <Route path={"/exercises/intervals/:interval"} component={IntervalScore} />
           </Switch>
+          <div id="footer">
+
+          </div>
         </Container>
       );
     } else {
@@ -87,7 +90,11 @@ class App extends React.Component {
               </Row>
             </Col>
           </Row>
+          <div id="footer">
+
+          </div>
         </Container>
+
       )
     }
   }

@@ -15,9 +15,17 @@ merge(defaults, {
   global: {
     animation: false,
     line: {
-      borderColor: 'black',
+      borderColor: 'ivory',
      },
-     defaultFontColor: 'black'
+     defaultFontColor: 'ivory',
+     title : {
+      fontSize: "18"
+     },
+     elements: {
+       point: {
+         borderColor: 'ivory'
+       }
+     }
   },
 });
 
@@ -145,17 +153,19 @@ class Goals extends React.Component {
 
 
   buildNoteGoalData() {
+    let noteAcc = this.props.noteAcc.slice().reverse();
+    
     let noteGoalData = {
-      labels: this.props.noteAcc.map((note, index) => index),
+      labels: noteAcc.map((note, index) => index),
       datasets: [{
         label: "Note Accuracy",
-        data: this.props.noteAcc,
+        data: noteAcc,
         fill: false,
         borderColor: "#f7b307"
       },
       {
         label: "Note Accuracy Goal",
-        data: this.props.noteAcc.map(note => 90),
+        data: noteAcc.map(note => 85),
         fill: false,
         borderColor: "#32a852"
       }]
@@ -164,17 +174,18 @@ class Goals extends React.Component {
   }
 
   buildPitchGoalData() {
+    let pitchAcc = this.props.pitchAcc.slice().reverse();
     let pitchGoalData = {
-      labels: this.props.pitchAcc.map((pitch, index) => index),
+      labels: pitchAcc.map((pitch, index) => index),
       datasets: [{
         label: "Pitch Accuracy",
-        data: this.props.pitchAcc,
+        data: pitchAcc,
         fill: false,
         borderColor: "#f7b307"
       },
       {
         label: "Pitch Accuracy Goal",
-        data: this.props.pitchAcc.map(pitch => 70),
+        data: pitchAcc.map(pitch => 70),
         fill: false,
         borderColor: "#32a852"
       }]
@@ -293,7 +304,11 @@ class Goals extends React.Component {
   }
 
   componentDidUpdate() {
-    if (this.props.noteAcc.length >= 10 && this.getNoteGoalPercentage() > 90 && !this.state.noteAccGoalReached) {
+    console.log("pitch acc");
+    console.log(this.props.pitchAcc);
+    console.log("note acc");
+    console.log(this.props.noteAcc);
+    if (this.props.noteAcc.length >= 10 && this.getNoteGoalPercentage() > 85 && !this.state.noteAccGoalReached) {
         this.setState({ noteAccGoalReached: true })
     }
 
@@ -337,7 +352,7 @@ class Goals extends React.Component {
     }
     let lastEntries = []
     if (length > 10) {
-      lastEntries = this.props.noteAcc.slice(length - 10).map(percent => Number(percent))
+      lastEntries = this.props.noteAcc.slice(0, 10).map(percent => Number(percent))
     } else {
       lastEntries = this.props.noteAcc.slice().map(percent => Number(percent));
     }
@@ -352,10 +367,12 @@ class Goals extends React.Component {
     }
     let lastEntries = []
     if (length > 10) {
-      lastEntries = this.props.pitchAcc.slice(length - 10).map(percent => Number(percent))
+      lastEntries = this.props.pitchAcc.slice(0, 10).map(percent => Number(percent))
     } else {
       lastEntries = this.props.pitchAcc.slice().map(percent => Number(percent));
     }
+    console.log("last entries");
+    console.log(lastEntries);
     let avg = lastEntries.reduce((acc, cur) => acc += cur) / lastEntries.length;
     return avg;
   }
@@ -367,7 +384,7 @@ class Goals extends React.Component {
           <Col md={{ span: 10, offset: 1 }}>
             <Row>
               <Col md={{ span: 12 }} className="welcome-back">
-                <h1>Welcome Back {this.props.userName}!</h1>
+                <h1 style={{color: "skyblue"}}>Welcome Back {this.props.userName}!</h1>
               </Col>
             </Row>
             <Row>
@@ -381,7 +398,7 @@ class Goals extends React.Component {
                           {Object.entries(this.props.badges).filter(badge => badge[1] === "unlocked").map(badge => {
                             return (
                               <Card style={{ width: '12%' }} className="border rounded border-dark badge-card mx-auto">
-                                <Card.Img variant="top" src={medaliconUnlocked} className="badge-img" />
+                                <Card.Img variant="top" src={medaliconDark} className="badge-img" />
                                 <Card.Body className="badge-card-body" style={{ padding: "5px" }}>
                                   <Card.Title className="font-weight-bold">{badgeNames[badge[0]]}</Card.Title>
                                   <Link to={`/exercises/intervals/${badgeIntervals[badge[0]]}`}><Button variant="primary">Train</Button></Link>
@@ -401,7 +418,7 @@ class Goals extends React.Component {
                           {Object.entries(this.props.badges).filter(badge => badge[1] === "locked").map(badge => {
                             return (
                               <Card style={{ width: '12%' }} className="border rounded border-dark badge-card mx-auto">
-                                <Card.Img variant="top" src={medaliconDark} className="badge-img" />
+                                <Card.Img variant="top" src={medaliconUnlocked} className="badge-img" />
                                 <Card.Body className="badge-card-body" style={{ padding: "5px", fontSize: "12px" }}>
                                   <Card.Title className="font-weight-bold">{badgeNames[badge[0]]}</Card.Title>
                                 </Card.Body>
@@ -438,18 +455,18 @@ class Goals extends React.Component {
             <Row>
               {this.state.showNoteAccGraph ?
                 <Col md={{ span: 4 }} className="note-goal-data border rounded border-dark">
-                  <h4>Note Accuracy</h4>
+                  <h4 style={{color: "skyblue"}}>Note Accuracy</h4>
                   <br />
                   <Line data={this.buildNoteGoalData()} options={noteGoalOptions} height={300} />
                   <br />
                   <Button className="dash-button-bottom" onClick={() => this.setState({ showNoteAccGraph: false })}>View Completion Percentage</Button>
                 </Col> :
                 <Col md={{ span: 4 }} className="note-goal-data border rounded border-dark">
-                  <h4>Note Accuracy: {Math.round(this.getNoteGoalPercentage())}%</h4>
+                  <h4 style={{color: "skyblue"}}>Note Accuracy: {Math.round(this.getNoteGoalPercentage())}%</h4>
                   <br />
-                  <h5>Target: 90%</h5>
+                  <h5>Target: 85%</h5>
                   <br />
-                  <ProgressBar now={this.getNoteGoalPercentage() / 90 * 100} label={Math.round(this.getNoteGoalPercentage() / 90 * 100) + "%"} />
+                  <ProgressBar now={this.getNoteGoalPercentage() / 85 * 100} label={Math.round(this.getNoteGoalPercentage() / 85 * 100) + "%"} />
                   <br />
                   <h6>Number of Exercises: {this.props.noteAcc.length}</h6>
                   <h6>10 Needed to Level Up</h6>
@@ -459,10 +476,10 @@ class Goals extends React.Component {
                 </Col>
               }
               <Col md={{ span: 4 }} className="border rounded border-dark train-level">
-                <h4 style={{ textAlign: "center" }}>To Level Up:</h4>
+                <h4 style={{ textAlign: "center", color: "skyblue" }}>To Level Up:</h4>
                 <br />
                 <ul>
-                  <li>Receive an Average Note Accuracy Score of at Least 90% on Your Last 10 Exercises</li>
+                  <li>Receive an Average Note Accuracy Score of at Least 85% on Your Last 10 Exercises</li>
                   <li>Receive an Average Pitch Accuracy Score of at Least 70% on Your Last 10 Exercises</li>
                   <li>Complete All Unlocked Badges: Badges Need an Interval Accuracy of at Least 70% after at least 3 Exercises </li>
                 </ul>
@@ -476,14 +493,14 @@ class Goals extends React.Component {
 
               {this.state.showPitchAccGraph ?
                 <Col md={{ span: 4 }} className="pitch-goal-data border rounded border-dark">
-                  <h4>Pitch Accuracy: {Math.round(this.getPitchGoalPercentage())}%</h4>
+                  <h4 style={{color: "skyblue"}}>Pitch Accuracy: {Math.round(this.getPitchGoalPercentage())}%</h4>
                   <br />
                   <Line data={this.buildPitchGoalData()} options={pitchGoalOptions} height={300} />
                   <br />
                   <Button className="dash-button-bottom" onClick={() => this.setState({ showPitchAccGraph: false })}>View Completion Percentage</Button>
                 </Col> :
                 <Col md={{ span: 4 }} className="pitch-goal-data border rounded border-dark">
-                  <h4>Pitch Accuracy: {Math.round(this.getPitchGoalPercentage())}%</h4>
+                  <h4 style={{color: "skyblue"}}>Pitch Accuracy: {Math.round(this.getPitchGoalPercentage())}%</h4>
                   <br />
                   <h5>Target: 70%</h5>
                   <br />

@@ -133,7 +133,7 @@ class IntervalScore extends React.Component {
                 <li>Press "Start Live Input" and then "Start Exercise" when you're ready to begin</li>
                 <li>When you're done, press "Get Results"</li>
                 <li>Use the play bar below the exercise if you would like the exercise played back</li>
-                <li>If you would like to switch our the exercise for another one, press "Load New Exercise"</li>
+                <li>If you would like to switch out the exercise for another one, press "Load New Exercise"</li>
               </ul>
             </Col>
             <Col md={{ span: 10 }}>
@@ -169,9 +169,9 @@ class IntervalScore extends React.Component {
                       </Row>
                       <Row className="results-legend">
                         <ul>
-                          <li style={{ color: "red" }}>Sharp</li>
-                          <li style={{ color: "darkblue" }}>Flat</li>
-                          <li style={{ color: "darkgreen" }}>On Pitch</li>
+                          <li style={{ color: "orangered" }}>Sharp</li>
+                          <li style={{ color: "royalblue" }}>Flat</li>
+                          <li style={{ color: "lawngreen" }}>On Pitch</li>
                         </ul>
                       </Row>
                     </Col>

@@ -1,13 +1,16 @@
 .container-fluid {
-  background-color: rgb(141, 141, 141);
+  /* background-image: url(../assets/gray-background.jpg); */
+  background-color: gray ;
   padding: 0;
   height: 100%;
   margin-right:auto;
-  margin-left:auto
+  margin-left:auto;
+  color: ivory;
 }
 
 html, body {
-  background-color: rgb(141, 141, 141);
+  /* background-image: url(../assets/gray-background.jpg); */
+  background-color: gray ;
   font-family: 'Average Sans', sans-serif;
 }
 
@@ -24,6 +27,27 @@ body {
   font-family: 'Average Sans', sans-serif !important;
 }
 
+.card-title {
+  color: black;
+}
+
 .nameForm {
   width: 80%;
+}
+
+#footer {
+  display: block;
+  height: 100px;
+}
+
+.nav-link {
+  font-family: 'Average Sans', sans-serif;
+}
+
+.navbar-text {
+  font-family: 'Average Sans', sans-serif;
+}
+
+.button-primary {
+  color: skyblue;
 }

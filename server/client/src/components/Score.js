@@ -147,13 +147,13 @@ class Score extends React.Component {
                     <br />
                     <Col md={{ span: 4, offset: 5 }} >
                       <Row className="results-legend">
-                        <h4>Results Legend</h4>
+                        <h3>Results Legend</h3>
                       </Row>
                       <Row className="results-legend">
                         <ul>
-                          <li style={{ color: "red" }}>Sharp</li>
-                          <li style={{ color: "darkblue" }}>Flat</li>
-                          <li style={{ color: "darkgreen" }}>On Pitch</li>
+                          <li style={{ color: "orangered" }}><h5>Sharp</h5></li>
+                          <li style={{ color: "royalblue" }}><h5>Flat</h5></li>
+                          <li style={{ color: "lawngreen" }}><h5>On Pitch</h5></li>
                         </ul>
                       </Row>
                     </Col>
