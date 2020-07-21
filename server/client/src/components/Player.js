@@ -21,11 +21,11 @@ class Player extends React.Component {
   }
 
   componentDidMount() {
-    this.setOnClick(this.props.startVisualPlaying);
+    // this.setOnClick(this.props.startVisualPlaying);
   }
 
   componentDidUpdate() {
-    this.setOnClick(this.props.startVisualPlaying);
+    // this.setOnClick(this.props.startVisualPlaying);
   }
 
   render() {

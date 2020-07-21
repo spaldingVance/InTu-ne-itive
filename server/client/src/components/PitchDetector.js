@@ -127,8 +127,8 @@ class PitchDetector extends React.Component {
         },
       }, gotStream);
     var myInterval = setInterval(updateOctavePitches, 5);
-    setTimeout(() => clearTimeout(myInterval), 3000);
-    setTimeout(() => this.setOctave(), 3000);
+    setTimeout(() => clearTimeout(myInterval), 2000);
+    setTimeout(() => this.setOctave(), 2000);
   }
 
   startLiveInput() {
@@ -157,7 +157,12 @@ class PitchDetector extends React.Component {
   }
 
   setOctave() {
-    let avg = findOctavePitches.reduce((acc, cur) => acc += cur) / findOctavePitches.length;
+    console.log("octave pitches");
+    console.log(findOctavePitches);
+    let pitches = findOctavePitches.slice().sort();
+    console.log(pitches);
+    console.log(pitches[Math.round(pitches.length / 2)])
+    let avg = pitches[Math.round(pitches.length / 2)];
     let note = noteFromPitch(avg);
     let startingNote = Math.round(note / 12) * 12;
     this.setState({ startingNote: startingNote })
@@ -171,7 +176,9 @@ class PitchDetector extends React.Component {
   getTimeWindowPitches() {
     clearTimeout(updatePitchInterval);
 
+
     let midiNotes = this.props.midi.map(midi => midi + this.state.startingNote);
+    console.log(midiNotes);
     midiNotes.unshift(this.state.startingNote);
     let myWindow = timeStamps;
     let window1 = pitchArr.filter(pitch => pitch.time > myWindow[0] && pitch.time < myWindow[1]);
@@ -182,6 +189,15 @@ class PitchDetector extends React.Component {
     let window6 = pitchArr.filter(pitch => pitch.time > myWindow[5] + 400 && pitch.time < myWindow[6]);
     let window7 = pitchArr.filter(pitch => pitch.time > myWindow[6] + 400 && pitch.time < myWindow[7]);
     let window8 = pitchArr.filter(pitch => pitch.time > myWindow[7] + 400 && pitch.time < myWindow[7] + 1000);
+
+    console.log(window1);
+    console.log(window2);
+    console.log(window3);
+    console.log(window4);
+    console.log(window5);
+    console.log(window6);
+    console.log(window7);
+    console.log(window8);
 
     window1 = window1.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[0] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[0] + 4)))
     window2 = window2.filter(pitch => (pitch.pitch > frequencyFromNoteNumber(midiNotes[1] - 4)) && (pitch.pitch < frequencyFromNoteNumber(midiNotes[1] + 4)))
